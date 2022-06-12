@@ -65,6 +65,8 @@ namespace Fermion {
 
                 Application.window.terminal.paste_text (text);
             });
+        } else {
+            Application.window.terminal.paste_text (text);
         }
     }
 }

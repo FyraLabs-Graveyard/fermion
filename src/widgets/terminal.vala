@@ -20,9 +20,39 @@ namespace Fermion {
     public class TerminalWidget : Vte.Terminal {    
         GLib.Pid child_pid;
 
+        // URL Matching. Yes, GNOME Terminal does this too.
+        const string USERCHARS = "-[:alnum:]";
+        const string USERCHARS_CLASS = "[" + USERCHARS + "]";
+        const string PASSCHARS_CLASS = "[-[:alnum:]\\Q,?;.:/!%$^*&~\"#'\\E]";
+        const string HOSTCHARS_CLASS = "[-[:alnum:]]";
+        const string HOST = HOSTCHARS_CLASS + "+(\\." + HOSTCHARS_CLASS + "+)*";
+        const string PORT = "(?:\\:[[:digit:]]{1,5})?";
+        const string PATHCHARS_CLASS = "[-[:alnum:]\\Q_$.+!*,;:@&=?/~#%\\E]";
+        const string PATHTERM_CLASS = "[^\\Q]'.}>) \t\r\n,\"\\E]";
+        const string SCHEME = "(?:news:|telnet:|nntp:|file:\\/|https?:|ftps?:|sftp:|webcal:" +
+                              "|irc:|sftp:|ldaps?:|nfs:|smb:|rsync:|ssh:|rlogin:|telnet:|git:" +
+                              "|git\\+ssh:|bzr:|bzr\\+ssh:|svn:|svn\\+ssh:|hg:|mailto:|magnet:)";
+
+        const string USERPASS = USERCHARS_CLASS + "+(?:" + PASSCHARS_CLASS + "+)?";
+        const string URLPATH = "(?:(/" + PATHCHARS_CLASS +
+                               "+(?:[(]" + PATHCHARS_CLASS +
+                               "*[)])*" + PATHCHARS_CLASS +
+                               "*)*" + PATHTERM_CLASS +
+                               ")?";
+
+        const string[] REGEX_STRINGS = {
+            SCHEME + "//(?:" + USERPASS + "\\@)?" + HOST + PORT + URLPATH,
+            "(?:www|ftp)" + HOSTCHARS_CLASS + "*\\." + HOST + PORT + URLPATH,
+            "(?:callto:|h323:|sip:)" + USERCHARS_CLASS + "[" + USERCHARS + ".]*(?:" + PORT + "/[a-z0-9]+)?\\@" + HOST,
+            "(?:mailto:)?" + USERCHARS_CLASS + "[" + USERCHARS + ".]*\\@" + HOSTCHARS_CLASS + "+\\." + HOST,
+            "(?:news:|man:|info:)[[:alnum:]\\Q^_{|}~!\"#$%&'()*+,./;:=?`\\E]+"
+        };
+
         public TerminalWidget () {
             this.set_hexpand (true);
             this.set_vexpand (true);
+
+            this.clickable (REGEX_STRINGS);
 
             restore_settings ();
             Application.settings.changed.connect (restore_settings);
@@ -76,6 +106,18 @@ namespace Fermion {
             };
 
             this.spawn_async (Vte.PtyFlags.DEFAULT, dir, { shell }, envv, SpawnFlags.SEARCH_PATH, null, -1, null, terminal_callback);
+        }
+
+        private void clickable (string[] str) {
+            foreach (unowned string exp in str) {
+                try {
+                    var regex = new Vte.Regex.for_match (exp, -1, PCRE2.Flags.MULTILINE);
+                    int id = this.match_add_regex (regex, 0);
+                    this.match_set_cursor_name (id, "pointer");
+                } catch (Error error) {
+                    warning (error.message);
+                }
+            }
         }
     }
 }

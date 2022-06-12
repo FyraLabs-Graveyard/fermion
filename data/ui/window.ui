@@ -10,6 +10,7 @@
                 <child>
                     <object class="HeAppBar">
                         <property name="show-buttons">true</property>
+                        <property name="show-back">false</property>
                         <child>
                             <object class="GtkMenuButton">
                                 <property name="icon-name">open-menu-symbolic</property>

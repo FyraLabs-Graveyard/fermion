@@ -34,6 +34,10 @@ add_project_arguments(
 	['--vapidir', vapi_dir],
 	language: 'vala'
 )
+add_project_arguments(
+    '-DPCRE2_CODE_UNIT_WIDTH=0',
+    language: 'c'
+)
 
 asresources = gnome.compile_resources(
 	'as-resources', join_paths(meson.project_source_root(), 'data', application_id + '.gresource.xml'),
