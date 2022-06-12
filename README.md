@@ -19,6 +19,7 @@ You'll need the following dependencies:
 - `valac`
 - `gtk4`
 - `libhelium-1`
+- `vte-2.91-gtk4` **WARNING**: You may need to manually compile VTE
 
 ## 🏗️ Building
 
