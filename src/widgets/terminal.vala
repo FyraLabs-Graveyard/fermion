@@ -17,15 +17,10 @@
  */
 
  namespace Terminal {
-    [GtkTemplate (ui = "/co/tauos/Terminal/window.ui")]
-    public class Window : He.ApplicationWindow {       
-        [GtkChild]
-        private unowned Gtk.Box box;
-        
-        public Window (He.Application app) {
-            Object (application: app);
-
-            box.append (new TerminalWidget ());
+    public class TerminalWidget : Vte.Terminal {        
+        public TerminalWidget () {
+            this.set_hexpand (true);
+            this.set_vexpand (true);
         }
     }
 }

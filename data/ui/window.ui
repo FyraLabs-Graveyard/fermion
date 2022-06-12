@@ -13,8 +13,7 @@
                     </object>
                 </child>
                 <child>
-                    <object class="GtkLabel">
-                        <property name="label">hello world</property>
+                    <object class="GtkBox" id="box">
                     </object>
                 </child>
             </object>

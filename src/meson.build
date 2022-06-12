@@ -1,6 +1,7 @@
 sources = [
    'application.vala',
-   'window.vala' 
+   'window.vala' ,
+   'widgets/terminal.vala'
 ]
 
 config_file = configure_file(
