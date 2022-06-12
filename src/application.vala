@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
- namespace Terminal {
+namespace Terminal {
     public class Application : He.Application {
         public static GLib.Settings settings;
 

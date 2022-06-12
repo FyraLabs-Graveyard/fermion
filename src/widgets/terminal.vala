@@ -1,4 +1,4 @@
-/* window.vala
+/* widgets/terminal.vala
  *
  * Copyright 2022 Fyra Labs
  *
@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
- namespace Terminal {
+namespace Terminal {
     public class TerminalWidget : Vte.Terminal {    
         GLib.Pid child_pid;
 

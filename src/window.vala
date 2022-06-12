@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
- namespace Terminal {
+namespace Terminal {
     [GtkTemplate (ui = "/co/tauos/Terminal/window.ui")]
     public class Window : He.ApplicationWindow {       
         [GtkChild]
