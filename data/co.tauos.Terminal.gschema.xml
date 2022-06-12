@@ -8,7 +8,7 @@
 
   <schema id="co.tauos.Terminal.Settings" path="/co/tauos/Terminal/Settings/">
     <key type="s" name="background-color">
-      <default>"#2D2D2D"</default>
+      <default>"#22262B"</default>
       <summary>Color of the background.</summary>
       <description>
           The color of the background of the terminal.
