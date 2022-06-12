@@ -49,9 +49,17 @@ namespace Terminal {
         }
 
         if (unsafe_warning != null) {
-            warning (unsafe_warning);
-        }
+            var unsafe_paste_dialog = new UnsafePasteDialog (
+                Application.window,
+                unsafe_warning,
+                text
+            );
 
-        Application.window.terminal.paste_text (text);
+            unsafe_paste_dialog.returned.connect (() => {    
+                unsafe_paste_dialog.destroy ();
+
+                Application.window.terminal.paste_text (text);
+            });
+        }
     }
 }

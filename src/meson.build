@@ -2,7 +2,8 @@ sources = [
    'application.vala',
    'window.vala' ,
    'widgets/terminal.vala',
-   'handlers/keyboard.vala'
+   'handlers/keyboard.vala',
+   'dialogs/unsafe_paste.vala'
 ]
 
 config_file = configure_file(

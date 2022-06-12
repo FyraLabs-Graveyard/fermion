@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+    <requires lib="gtk" version="4.0" />
+    <template class="TerminalUnsafePasteDialog" parent="HeDialog">
+        <property name="icon">dialog-warning</property>
+        <property name="modal">true</property>
+        <property name="subtitle">Copying commands into Terminal can be dangerous. Be sure you understand what each part of the pasted text does before continuing.</property>
+        <property name="secondary-button">
+            <object class="HeTintButton">
+                <property name="label">Paste Anyway</property>
+                <property name="color">red</property>
+                <signal handler="paste_anyway" name="clicked" />
+            </object>
+        </property>
+    </template>
+</interface>
