@@ -31,7 +31,7 @@ namespace Terminal {
                 title: title_text
             );
 
-            set_info (@"$(pasted_text)\nYou may disable this dialog in Settings");
+            set_info (@"<i><tt>$(pasted_text)</tt></i>\n\nYou may disable this dialog in Settings");
 
             this.present ();
         }
