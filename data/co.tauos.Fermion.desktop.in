@@ -1,8 +1,8 @@
 [Desktop Entry]
-Name=Terminal
+Name=Fermion
 Comment=Use the command line
-Exec=terminal
-Icon=co.tauos.Terminal
+Exec=fermion
+Icon=co.tauos.Fermion
 Keywords=shell;prompt;command;commandline;cmd;
 Type=Application
 Categories=GNOME;GTK;System;TerminalEmulator;

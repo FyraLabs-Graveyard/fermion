@@ -1,6 +1,6 @@
-data/co.tauos.Terminal.desktop.in
-data/co.tauos.Terminal.appdata.xml.in
-data/co.tauos.Terminal.gschema.xml
+data/co.tauos.Fermion.desktop.in
+data/co.tauos.Fermion.appdata.xml.in
+data/co.tauos.Fermion.gschema.xml
 data/ui/window.ui
 src/window.vala
 src/application.vala

@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Terminal {
+namespace Fermion {
     private void action_copy_handler () {
         var clipboard = Application.window.clipboard;
         clipboard.set_text (Application.window.terminal.get_selection ());

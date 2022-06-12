@@ -6,7 +6,7 @@ install_data(
 )
 
 install_data(
-  'co.tauos.Terminal-symbolic.svg',
+  'co.tauos.Fermion-symbolic.svg',
   install_dir: join_paths(icondir, 'symbolic/apps'),
   rename: '@0@-symbolic.svg'.format(app_id),
 )

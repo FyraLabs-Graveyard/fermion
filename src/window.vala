@@ -16,13 +16,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Terminal {
-    [GtkTemplate (ui = "/co/tauos/Terminal/window.ui")]
+namespace Fermion {
+    [GtkTemplate (ui = "/co/tauos/Fermion/window.ui")]
     public class Window : He.ApplicationWindow {       
         [GtkChild]
         private unowned Gtk.Box box;
 
-        public Terminal.Application app { get; construct; }
+        public Fermion.Application app { get; construct; }
         public Gdk.Clipboard clipboard;
         public SimpleActionGroup actions { get; construct; }
         public TerminalWidget terminal { get; set; }
@@ -37,7 +37,7 @@ namespace Terminal {
             { ACTION_PASTE, action_paste_handler }
         };
         
-        public Window (Terminal.Application app, string? command, string? working_directory = GLib.Environment.get_current_dir ()) {
+        public Window (Fermion.Application app, string? command, string? working_directory = GLib.Environment.get_current_dir ()) {
             Object (app: app);
 
             terminal = new TerminalWidget ();
@@ -48,7 +48,7 @@ namespace Terminal {
             }
         }
 
-        public Window.with_working_directory (Terminal.Application app, string? location = GLib.Environment.get_current_dir ()) {
+        public Window.with_working_directory (Fermion.Application app, string? location = GLib.Environment.get_current_dir ()) {
             Object (app: app);
 
             terminal = new TerminalWidget ();

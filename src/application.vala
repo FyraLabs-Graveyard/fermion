@@ -16,10 +16,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Terminal {
+namespace Fermion {
     public class Application : He.Application {
         public static GLib.Settings settings;
-        public static Terminal.Window window;
+        public static Fermion.Window window;
 
         public static string? working_directory = null;
         [CCode (array_length = false, array_null_terminated = true)]
@@ -71,7 +71,7 @@ namespace Terminal {
 
         private int _command_line (ApplicationCommandLine command_line) {
             var context = new OptionContext (null);
-            context.add_main_entries (ENTRIES, "terminal");
+            context.add_main_entries (ENTRIES, "fermion");
             context.set_help_enabled (false);
 
             string[] args = command_line.get_arguments ();
@@ -105,14 +105,14 @@ namespace Terminal {
                 unowned string[] tmp = arg_opt;
                 context.parse (ref tmp);
             } catch (Error e) {
-                stdout.printf ("terminal: ERROR: " + e.message + "\n");
+                stdout.printf ("fermion: ERROR: " + e.message + "\n");
                 return 0;
             }
 
             if (option_help) {
                 command_line.print (context.get_help (true, null));
             } else if (option_version) {
-                command_line.print ("%s %s", "Terminal" + Config.NAME_SUFFIX, Config.VERSION + "\n\n");
+                command_line.print ("%s %s", "Fermion" + Config.NAME_SUFFIX, Config.VERSION + "\n\n");
             } else {
                 if (command_e != null) {
                     // TODO this would generate multiple command tabs lol
@@ -132,21 +132,21 @@ namespace Terminal {
         }
 
         private void run_command_line (string command_line, string? working_directory = null) {
-            window = (Terminal.Window) this.active_window;
+            window = (Fermion.Window) this.active_window;
             if (window == null) {
                 window = new Window(this, command_line, working_directory);
             } else {
-                print ("Terminal already started");
+                print ("Fermion already started");
             }
             window.present ();
         }
 
         private void start_terminal_with_working_directory (string? working_directory) {
-            window = (Terminal.Window) this.active_window;
+            window = (Fermion.Window) this.active_window;
             if (window == null) {
                 window = new Window.with_working_directory (this, working_directory);
             } else {
-                print ("Terminal already started");
+                print ("Fermion already started");
             }
             window.present ();
         }
@@ -155,7 +155,7 @@ namespace Terminal {
             string[] authors = { "Jamie Murphy" };
             string[] artists = { "Jamie Murphy", "Lains https://github.com/lainsce" };
             Gtk.show_about_dialog (this.active_window,
-                                   "program-name", "Terminal" + Config.NAME_SUFFIX,
+                                   "program-name", "Fermion" + Config.NAME_SUFFIX,
                                    "authors", authors,
                                    "artists", artists,
                                    "comments", "Use the command line",
@@ -170,6 +170,6 @@ namespace Terminal {
 }
 
 public static int main (string[] args) {
-    var app = new Terminal.Application ();
+    var app = new Fermion.Application ();
     return app.run (args);
 }

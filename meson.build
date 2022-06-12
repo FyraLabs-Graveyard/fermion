@@ -1,18 +1,18 @@
 project(
-    'terminal',
+    'fermion',
     ['c', 'vala'],
     version: '0.1.0',
     meson_version: '>= 0.59.0',
     default_options: [ 'warning_level=2', ],
 )
 
-application_id = 'co.tauos.Terminal'
+application_id = 'co.tauos.Fermion'
 
 if get_option('development')
-  app_id = 'co.tauos.Terminal.Devel'
+  app_id = 'co.tauos.Fermion.Devel'
   name_suffix = ' (Development)'
 else
-  app_id = 'co.tauos.Terminal'
+  app_id = 'co.tauos.Fermion'
   name_suffix = ''
 endif
 

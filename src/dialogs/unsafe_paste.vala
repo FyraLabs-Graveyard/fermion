@@ -16,8 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Terminal {
-    [GtkTemplate (ui = "/co/tauos/Terminal/dialogs/unsafe_paste.ui")]
+namespace Fermion {
+    [GtkTemplate (ui = "/co/tauos/Fermion/dialogs/unsafe_paste.ui")]
     public class UnsafePasteDialog : He.Dialog {
         public signal void returned ();
 
@@ -26,7 +26,7 @@ namespace Terminal {
             returned ();
         }
         
-        public UnsafePasteDialog (Terminal.Window parent, string title_text, string pasted_text) {
+        public UnsafePasteDialog (Fermion.Window parent, string title_text, string pasted_text) {
             Object (
                 title: title_text
             );

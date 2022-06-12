@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop">
-  <id>co.tauos.Terminal.desktop</id>
+  <id>co.tauos.Fermion.desktop</id>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>GPL-3.0-or-later</project_license>
-  <name>Terminal</name>
+  <name>Fermion</name>
   <summary>Use the command line</summary>
   <description>
     <p>Use the command line.</p>

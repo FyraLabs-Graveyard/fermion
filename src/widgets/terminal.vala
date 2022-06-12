@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Terminal {
+namespace Fermion {
     public class TerminalWidget : Vte.Terminal {    
         GLib.Pid child_pid;
 

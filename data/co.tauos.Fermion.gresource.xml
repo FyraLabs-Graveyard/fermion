@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gresources>
-  <gresource prefix="/co/tauos/Terminal">
+  <gresource prefix="/co/tauos/Fermion">
     <file alias="window.ui">ui/window.ui</file>
     <file alias="dialogs/unsafe_paste.ui">ui/dialogs/unsafe_paste.ui</file>
     <file alias="gtk/help-overlay.ui">ui/gtk/help-overlay.ui</file>
   </gresource>
 
   <!-- Icons: Every single custom icon that's used in the UI should be listed here, and in the actions folder -->
-  <gresource prefix="/co/tauos/Terminal/icons"></gresource>
+  <gresource prefix="/co/tauos/Fermion/icons"></gresource>
 </gresources>

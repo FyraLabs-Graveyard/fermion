@@ -1,6 +1,6 @@
-<img align="left" style="vertical-align: middle" width="120" height="120" src="data/icons/co.tauos.Terminal.svg">
+<img align="left" style="vertical-align: middle" width="120" height="120" src="data/icons/co.tauos.Fermion.svg">
 
-# Terminal
+# Fermion
 
 Use the command line
 
@@ -35,15 +35,15 @@ $ ninja test
 For debug messages on the GUI application, set the `G_MESSAGES_DEBUG` environment variable, e.g. to `all`:
 
 ```bash
-G_MESSAGES_DEBUG=all ./src/terminal
+G_MESSAGES_DEBUG=all ./src/fermion
 ```
 
 ## 📦 Installing
 
-To install, use `ninja install`, then execute with `terminal`.
+To install, use `ninja install`, then execute with `fermion`.
 
 ```bash
 $ sudo ninja install
-$ terminal
+$ fermion
 ```
 

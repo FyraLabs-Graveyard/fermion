@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
     <requires lib="gtk" version="4.0" />
-    <template class="TerminalWindow" parent="HeApplicationWindow">
-        <property name="title" translatable="yes">Terminal</property>
+    <template class="FermionWindow" parent="HeApplicationWindow">
+        <property name="title" translatable="yes">Fermion</property>
         <child>
             <object class="GtkBox">
                 <property name="orientation">vertical</property>
@@ -39,7 +39,7 @@
                 <attribute name="action">win.show-help-overlay</attribute>
             </item>
             <item>
-                <attribute name="label" translatable="yes">_About Terminal</attribute>
+                <attribute name="label" translatable="yes">_About Fermion</attribute>
                 <attribute name="action">app.about</attribute>
             </item>
         </section>
