@@ -1,5 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist gettext-domain="terminal">
-	<schema id="co.tauos.Terminal.Settings" path="/co/tauos/Terminal/Settings/">
-	</schema>
+  <enum id="terminal-cursor-shapes">
+    <value nick="Block" value="0" />
+    <value nick="I-Beam" value="1" />
+    <value nick="Underline" value="2" />
+  </enum>
+
+  <schema id="co.tauos.Terminal.Settings" path="/co/tauos/Terminal/Settings/">
+    <key type="s" name="background-color">
+      <default>"#2D2D2D"</default>
+      <summary>Color of the background.</summary>
+      <description>
+          The color of the background of the terminal.
+
+          The string can be either one of:
+            - A hexadecimal value in the form “#rgb”, “#rrggbb”, “#rrrgggbbb” or ”#rrrrggggbbbb”
+            - A RGB color in the form “rgb(r,g,b)” (In this case the color will have full opacity)
+            - A RGBA color in the form “rgba(r,g,b,a)”
+      </description>
+    </key>
+    <key type="s" name="foreground-color">
+      <default>"#ABABB6"</default>
+      <summary>Color of the text.</summary>
+      <description>
+          The color of the text of the terminal.
+
+          The string can be either one of:
+            - A hexadecimal value in the form “#rgb”, “#rrggbb”, “#rrrgggbbb” or ”#rrrrggggbbbb”
+            - A RGB color in the form “rgb(r,g,b)” (In this case the color will have full opacity)
+            - A RGBA color in the form “rgba(r,g,b,a)”
+      </description>
+    </key>
+    <key type="s" name="cursor-color">
+      <default>"#839496"</default>
+      <summary>Color of the cursor.</summary>
+      <description>
+          The color of the cursor of the terminal.
+
+          The string can be either one of:
+            - A hexadecimal value in the form “#rgb”, “#rrggbb”, “#rrrgggbbb” or ”#rrrrggggbbbb”
+            - A RGB color in the form “rgb(r,g,b)” (In this case the color will have full opacity)
+            - A RGBA color in the form “rgba(r,g,b,a)”
+      </description>
+    </key>
+    <key name="cursor-shape" enum="terminal-cursor-shapes">
+      <default>"Block"</default>
+      <summary>Shape of the cursor.</summary>
+      <description>The shape of the cursor of the terminal.</description>
+    </key>
+  </schema>
 </schemalist>

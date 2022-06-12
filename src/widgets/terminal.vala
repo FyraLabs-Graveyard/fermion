@@ -23,6 +23,25 @@
         public TerminalWidget () {
             this.set_hexpand (true);
             this.set_vexpand (true);
+
+            restore_settings ();
+            Application.settings.changed.connect (restore_settings);
+        }
+
+        public void restore_settings () {
+            Gdk.RGBA background_color = Gdk.RGBA ();
+            background_color.parse (Application.settings.get_string ("background-color"));
+            Gdk.RGBA foreground_color = Gdk.RGBA ();
+            foreground_color.parse (Application.settings.get_string ("foreground-color"));
+
+            this.set_colors (foreground_color, background_color, null);
+
+            Gdk.RGBA cursor_color = Gdk.RGBA ();
+            cursor_color.parse (Application.settings.get_string ("cursor-color"));
+
+            this.set_color_cursor (cursor_color);
+
+            this.set_cursor_shape ((Vte.CursorShape) Application.settings.get_enum ("cursor-shape"));
         }
 
         private void terminal_callback (Vte.Terminal terminal, GLib.Pid pid, Error? error) {

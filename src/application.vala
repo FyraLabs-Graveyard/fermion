@@ -18,12 +18,15 @@
 
  namespace Terminal {
     public class Application : He.Application {
+        public static GLib.Settings settings;
+
         private const GLib.ActionEntry app_entries[] = {
             { "about", on_about_action },
             { "quit", quit }
         };
 
         construct {
+            settings = new GLib.Settings (Config.APP_SETTINGS);
             application_id = Config.APP_ID;
             flags = ApplicationFlags.FLAGS_NONE;
             Intl.setlocale (LocaleCategory.ALL, "");
