@@ -17,10 +17,31 @@
  */
 
  namespace Terminal {
-    public class TerminalWidget : Vte.Terminal {        
+    public class TerminalWidget : Vte.Terminal {    
+        GLib.Pid child_pid;
+
         public TerminalWidget () {
             this.set_hexpand (true);
             this.set_vexpand (true);
+        }
+
+        private void terminal_callback (Vte.Terminal terminal, GLib.Pid pid, Error? error) {
+            if (pid != -1) {
+                child_pid = pid;
+            } else {
+                print ("%s\n", error.message);
+            }
+        }
+
+        public void set_active_shell (string dir = GLib.Environment.get_current_dir ()) {
+            string shell = Vte.get_user_shell ();
+            string?[] envv = null;
+
+            envv = {
+                // Set environment variables
+            };
+
+            this.spawn_async (Vte.PtyFlags.DEFAULT, dir, { shell }, envv, SpawnFlags.SEARCH_PATH, null, -1, null, terminal_callback);
         }
     }
 }

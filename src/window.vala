@@ -25,7 +25,9 @@
         public Window (He.Application app) {
             Object (application: app);
 
-            box.append (new TerminalWidget ());
+            var terminal = new TerminalWidget ();
+            terminal.set_active_shell ();
+            box.append (terminal);
         }
     }
 }
