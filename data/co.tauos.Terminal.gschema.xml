@@ -48,5 +48,10 @@
       <summary>Shape of the cursor.</summary>
       <description>The shape of the cursor of the terminal.</description>
     </key>
+    <key name="audible-bell" type="b">
+      <default>true</default>
+      <summary>Whether or not to use an audible bell event alert</summary>
+      <description>Controls whether or not the terminal will beep when the end of a line is reached, or for tab-completion when there are multiple or no options.</description>
+    </key>
   </schema>
 </schemalist>

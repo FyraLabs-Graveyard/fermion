@@ -42,6 +42,8 @@
             this.set_color_cursor (cursor_color);
 
             this.set_cursor_shape ((Vte.CursorShape) Application.settings.get_enum ("cursor-shape"));
+
+            this.set_audible_bell (Application.settings.get_boolean ("audible-bell"));
         }
 
         private void terminal_callback (Vte.Terminal terminal, GLib.Pid pid, Error? error) {
