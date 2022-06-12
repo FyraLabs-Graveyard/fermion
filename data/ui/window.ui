@@ -10,11 +10,23 @@
                 <child>
                     <object class="HeAppBar">
                         <property name="show-buttons">true</property>
+                        <child>
+                            <object class="GtkMenuButton">
+                                <property name="icon-name">open-menu-symbolic</property>
+                                <property name="menu-model">primary_menu</property>
+                            </object>
+                        </child>
+                        <child>
+                            <object class="GtkToggleButton" id="search_button">
+                                <property name="valign">center</property>
+                                <property name="tooltip-text" translatable="yes">Search</property>
+                                <property name="icon-name">edit-find-symbolic</property>
+                            </object>
+                        </child>
                     </object>
                 </child>
                 <child>
-                    <object class="GtkBox" id="box">
-                    </object>
+                    <object class="GtkBox" id="box"></object>
                 </child>
             </object>
         </child>

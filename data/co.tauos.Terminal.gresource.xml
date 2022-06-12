@@ -2,6 +2,7 @@
 <gresources>
   <gresource prefix="/co/tauos/Terminal">
     <file alias="window.ui">ui/window.ui</file>
+    <file alias="gtk/help-overlay.ui">ui/gtk/help-overlay.ui</file>
   </gresource>
 
   <!-- Icons: Every single custom icon that's used in the UI should be listed here, and in the actions folder -->
