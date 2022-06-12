@@ -22,11 +22,22 @@
         [GtkChild]
         private unowned Gtk.Box box;
         
-        public Window (He.Application app) {
+        public Window (He.Application app, string? command, string? working_directory = GLib.Environment.get_current_dir ()) {
             Object (application: app);
 
             var terminal = new TerminalWidget ();
-            terminal.set_active_shell ();
+            terminal.set_active_shell (working_directory);
+            box.append (terminal);
+            if (command != null) {
+                terminal.run_program (command, working_directory);
+            }
+        }
+
+        public Window.with_working_directory (He.Application app, string? location = GLib.Environment.get_current_dir ()) {
+            Object (application: app);
+
+            var terminal = new TerminalWidget ();
+            terminal.set_active_shell (location);
             box.append (terminal);
         }
     }

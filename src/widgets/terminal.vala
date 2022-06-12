@@ -46,15 +46,28 @@
             this.set_audible_bell (Application.settings.get_boolean ("audible-bell"));
         }
 
+        public void run_program (string program_string, string? working_directory) {
+            try {
+                string[]? program_with_args = null;
+                Shell.parse_argv (program_string, out program_with_args);
+    
+                this.spawn_async (Vte.PtyFlags.DEFAULT, working_directory, program_with_args, null, SpawnFlags.SEARCH_PATH, null, -1, null, terminal_callback);
+            } catch (Error e) {
+                warning (e.message);
+                feed ((e.message + "\r\n\r\n").data);
+                set_active_shell (working_directory);
+            }
+        }
+
         private void terminal_callback (Vte.Terminal terminal, GLib.Pid pid, Error? error) {
             if (pid != -1) {
                 child_pid = pid;
             } else {
-                print ("%s\n", error.message);
+                feed ((error.message + "\r\n\r\n").data);
             }
         }
 
-        public void set_active_shell (string dir = GLib.Environment.get_current_dir ()) {
+        public void set_active_shell (string? dir = GLib.Environment.get_current_dir ()) {
             string shell = Vte.get_user_shell ();
             string?[] envv = null;
 
