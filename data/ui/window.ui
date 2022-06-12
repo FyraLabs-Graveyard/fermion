@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+    <requires lib="gtk" version="4.0" />
+    <template class="TerminalWindow" parent="HeApplicationWindow">
+        <property name="title" translatable="yes">Terminal</property>
+        <child>
+            <object class="GtkBox">
+                <property name="orientation">vertical</property>
+                <property name="spacing">0</property>
+                <child>
+                    <object class="HeAppBar">
+                        <property name="show-buttons">true</property>
+                    </object>
+                </child>
+                <child>
+                    <object class="GtkLabel">
+                        <property name="label">hello world</property>
+                    </object>
+                </child>
+            </object>
+        </child>
+    </template>
+
+    <menu id="primary_menu">
+        <section>
+            <item>
+                <attribute name="label" translatable="yes">_Keyboard Shortcuts</attribute>
+                <attribute name="action">win.show-help-overlay</attribute>
+            </item>
+            <item>
+                <attribute name="label" translatable="yes">_About Terminal</attribute>
+                <attribute name="action">app.about</attribute>
+            </item>
+        </section>
+    </menu>
+</interface>

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist gettext-domain="terminal">
+	<schema id="co.tauos.Terminal.Settings" path="/co/tauos/Terminal/Settings/">
+	</schema>
+</schemalist>

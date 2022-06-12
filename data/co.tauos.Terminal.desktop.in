@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Terminal
+Comment=Use the command line
+Exec=terminal
+Icon=co.tauos.Terminal
+Keywords=shell;prompt;command;commandline;cmd;
+Type=Application
+Categories=GNOME;GTK;System;TerminalEmulator;
+StartupNotify=true

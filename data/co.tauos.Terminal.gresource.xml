@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+  <gresource prefix="/co/tauos/Terminal">
+    <file alias="window.ui">ui/window.ui</file>
+  </gresource>
+
+  <!-- Icons: Every single custom icon that's used in the UI should be listed here, and in the actions folder -->
+  <gresource prefix="/co/tauos/Terminal/icons"></gresource>
+</gresources>
