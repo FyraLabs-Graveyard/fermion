@@ -12,7 +12,11 @@ config_file = configure_file(
 deps = [
     dependency('gtk4'),
     dependency('libhelium-1'),
+    # TODO add this as a subproject or smth, or make a vte-gtk4 package for tau. idk
+    dependency('vte-2.91-gtk4')
 ]
+
+add_project_arguments(['--define', 'VTE_0_68_GTK4'], language : 'vala')
 
 gnome = import('gnome')
 
