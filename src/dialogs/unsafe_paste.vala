@@ -28,10 +28,13 @@ namespace Fermion {
         
         public UnsafePasteDialog (Fermion.Window parent, string title_text, string pasted_text) {
             Object (
-                title: title_text
+                title: title_text,
+                subtitle: @"<i><tt>$(pasted_text)</tt></i>"
             );
 
-            set_info (@"<i><tt>$(pasted_text)</tt></i>\n\nYou may disable this dialog in Settings");
+            set_info (@"Copying commands into Fermion can be dangerous. Be sure you understand what each part of the pasted text does before continuing.\n\nYou may disable this dialog in Settings");
+
+            this.set_parent (parent);
 
             this.present ();
         }
