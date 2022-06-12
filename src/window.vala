@@ -21,11 +21,24 @@ namespace Terminal {
     public class Window : He.ApplicationWindow {       
         [GtkChild]
         private unowned Gtk.Box box;
-        
-        public Window (He.Application app, string? command, string? working_directory = GLib.Environment.get_current_dir ()) {
-            Object (application: app);
 
-            var terminal = new TerminalWidget ();
+        public Terminal.Application app { get; construct; }
+        public Gdk.Clipboard clipboard;
+        public SimpleActionGroup actions { get; construct; }
+        public TerminalWidget terminal { get; set; }
+
+        // Keyboard Actions
+        public const string ACTION_PASTE = "action-paste";
+        private static Gee.MultiMap<string, string> action_accelerators = new Gee.HashMultiMap<string, string> ();
+
+        private const ActionEntry[] ENTRIES = {
+            { ACTION_PASTE, action_paste_handler }
+        };
+        
+        public Window (Terminal.Application app, string? command, string? working_directory = GLib.Environment.get_current_dir ()) {
+            Object (app: app);
+
+            terminal = new TerminalWidget ();
             terminal.set_active_shell (working_directory);
             box.append (terminal);
             if (command != null) {
@@ -33,12 +46,33 @@ namespace Terminal {
             }
         }
 
-        public Window.with_working_directory (He.Application app, string? location = GLib.Environment.get_current_dir ()) {
-            Object (application: app);
+        public Window.with_working_directory (Terminal.Application app, string? location = GLib.Environment.get_current_dir ()) {
+            Object (app: app);
 
-            var terminal = new TerminalWidget ();
+            terminal = new TerminalWidget ();
             terminal.set_active_shell (location);
             box.append (terminal);
+        }
+
+        static construct {
+            action_accelerators[ACTION_PASTE] = "<Control><Shift>v";
+        }
+
+        construct {
+            set_application (app);
+
+            actions = new SimpleActionGroup ();
+            actions.add_action_entries (ENTRIES, this);
+            insert_action_group ("win", actions);
+
+            foreach (var action in action_accelerators.get_keys ()) {
+                var accels_array = action_accelerators[action].to_array ();
+                accels_array += null;
+
+                application.set_accels_for_action (@"win.$(action)", accels_array);
+            }
+
+            clipboard = this.get_clipboard ();
         }
     }
 }

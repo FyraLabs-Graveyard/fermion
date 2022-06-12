@@ -1,7 +1,8 @@
 sources = [
    'application.vala',
    'window.vala' ,
-   'widgets/terminal.vala'
+   'widgets/terminal.vala',
+   'handlers/keyboard.vala'
 ]
 
 config_file = configure_file(
@@ -13,6 +14,7 @@ config_file = configure_file(
 deps = [
     dependency('gtk4'),
     dependency('libhelium-1'),
+    dependency('gee-0.8'),
     # TODO add this as a subproject or smth, or make a vte-gtk4 package for tau. idk
     dependency('vte-2.91-gtk4')
 ]

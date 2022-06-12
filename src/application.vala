@@ -19,6 +19,7 @@
 namespace Terminal {
     public class Application : He.Application {
         public static GLib.Settings settings;
+        public static Terminal.Window window;
 
         public static string? working_directory = null;
         [CCode (array_length = false, array_null_terminated = true)]
@@ -131,23 +132,23 @@ namespace Terminal {
         }
 
         private void run_command_line (string command_line, string? working_directory = null) {
-            var win = this.active_window;
-            if (win == null) {
-                win = new Window(this, command_line, working_directory);
+            window = (Terminal.Window) this.active_window;
+            if (window == null) {
+                window = new Window(this, command_line, working_directory);
             } else {
                 print ("Terminal already started");
             }
-            win.present ();
+            window.present ();
         }
 
         private void start_terminal_with_working_directory (string? working_directory) {
-            var win = this.active_window;
-            if (win == null) {
-                win = new Window.with_working_directory (this, working_directory);
+            window = (Terminal.Window) this.active_window;
+            if (window == null) {
+                window = new Window.with_working_directory (this, working_directory);
             } else {
                 print ("Terminal already started");
             }
-            win.present ();
+            window.present ();
         }
 
         private void on_about_action () {
