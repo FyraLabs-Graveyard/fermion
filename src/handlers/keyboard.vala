@@ -17,6 +17,11 @@
  */
 
 namespace Terminal {
+    private void action_copy_handler () {
+        var clipboard = Application.window.clipboard;
+        clipboard.set_text (Application.window.terminal.get_selection ());
+    }
+
     private void action_paste_handler () {
         var clipboard = Application.window.clipboard;
         clipboard.read_text_async.begin (null, (obj, res) => {

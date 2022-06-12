@@ -19,7 +19,8 @@ You'll need the following dependencies:
 - `valac`
 - `gtk4`
 - `libhelium-1`
-- `vte-2.91-gtk4` **WARNING**: You may need to manually compile VTE
+- `vte-2.91-gtk4` **WARNING**: You may need to manually compile VTE.
+Use the https://gitlab.gnome.org/ItsJamie9494/vte fork of VTE, which includes patches adding nessecary functions.
 
 ## 🏗️ Building
 

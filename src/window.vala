@@ -28,10 +28,12 @@ namespace Terminal {
         public TerminalWidget terminal { get; set; }
 
         // Keyboard Actions
+        public const string ACTION_COPY = "action-copy";
         public const string ACTION_PASTE = "action-paste";
         private static Gee.MultiMap<string, string> action_accelerators = new Gee.HashMultiMap<string, string> ();
 
         private const ActionEntry[] ENTRIES = {
+            { ACTION_COPY, action_copy_handler },
             { ACTION_PASTE, action_paste_handler }
         };
         
@@ -55,6 +57,7 @@ namespace Terminal {
         }
 
         static construct {
+            action_accelerators[ACTION_COPY] = "<Control><Shift>c";
             action_accelerators[ACTION_PASTE] = "<Control><Shift>v";
         }
 
