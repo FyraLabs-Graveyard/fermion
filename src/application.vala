@@ -51,10 +51,10 @@
             string[] authors = { "Jamie Murphy" };
             string[] artists = { "Jamie Murphy", "Lains https://github.com/lainsce" };
             Gtk.show_about_dialog (this.active_window,
-                                   "program-name", "Catalogue" + Config.NAME_SUFFIX,
+                                   "program-name", "Terminal" + Config.NAME_SUFFIX,
                                    "authors", authors,
                                    "artists", artists,
-                                   "comments", "A nice way to manage the software on your system.",
+                                   "comments", "Use the command line",
                                    "copyright", "Made with <3 by Fyra Labs",
                                    "logo-icon-name", Config.APP_ID,
                                    "website", "https://tauos.co",

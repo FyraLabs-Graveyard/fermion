@@ -2,7 +2,7 @@
 
 # Terminal
 
-An open app store for developers.
+Use the command line
 
 ###
 
