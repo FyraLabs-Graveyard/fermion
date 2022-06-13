@@ -25,7 +25,10 @@ namespace Fermion {
         public Fermion.Application app { get; construct; }
         public Gdk.Clipboard clipboard;
         public SimpleActionGroup actions { get; construct; }
+        public Menu menu = new GLib.Menu ();
         public TerminalWidget terminal { get; set; }
+
+        private Gtk.PopoverMenu popover { get; set; }
 
         // Keyboard Actions
         public const string ACTION_COPY = "action-copy";
@@ -36,6 +39,51 @@ namespace Fermion {
             { ACTION_COPY, action_copy_handler },
             { ACTION_PASTE, action_paste_handler }
         };
+
+        private void handle_events () {
+            Gtk.EventControllerKey controller = new Gtk.EventControllerKey ();
+            Gtk.GestureClick rightclick = new Gtk.GestureClick () {
+                button = Gdk.BUTTON_SECONDARY
+            };
+            terminal.add_controller (rightclick);
+            terminal.add_controller (controller);
+            popover.set_parent (terminal);
+
+            rightclick.pressed.connect ((n_press, x, y) => {
+                Gdk.Rectangle rect = {(int)x,
+                                      (int)y,
+                                      0,
+                                      0};
+                popover.set_pointing_to (rect);
+                popover.popup ();
+            });
+
+            controller.key_pressed.connect ((keyval, keycode, state) => {
+                switch (keyval) {
+                    case Gdk.Key.Menu:
+                        long col, row;
+                        terminal.get_cursor_position (out col, out row);
+                        var cell_width = terminal.get_char_width ();
+                        var cell_height = terminal.get_char_height ();
+                        var vadj_val = terminal.get_vadjustment ().get_value ();
+
+                        Gdk.Rectangle rect = {(int)(col * cell_width),
+                                            (int)((row - vadj_val) * cell_height),
+                                            (int)cell_width,
+                                            (int)cell_height};
+
+                        popover.set_pointing_to (rect);
+                        popover.popup ();
+                        break;
+                    default:
+                        break;
+                }
+
+                return false;
+            });
+
+            terminal.grab_focus ();
+        }
         
         public Window (Fermion.Application app, string? command, string? working_directory = GLib.Environment.get_current_dir ()) {
             Object (app: app);
@@ -46,6 +94,7 @@ namespace Fermion {
             if (command != null) {
                 terminal.run_program (command, working_directory);
             }
+            handle_events ();
         }
 
         public Window.with_working_directory (Fermion.Application app, string? location = GLib.Environment.get_current_dir ()) {
@@ -54,18 +103,21 @@ namespace Fermion {
             terminal = new TerminalWidget ();
             terminal.set_active_shell (location);
             box.append (terminal);
+            handle_events ();
         }
 
         static construct {
-            action_accelerators[ACTION_COPY] = "<Control><Shift>c";
-            action_accelerators[ACTION_PASTE] = "<Control><Shift>v";
+            // this is broken and idk why
+            action_accelerators[ACTION_COPY] = "<Ctrl><Shft>C";
+            action_accelerators[ACTION_PASTE] = "<Ctrl><Shft>V";
         }
 
         construct {
             set_application (app);
 
+            popover = new Gtk.PopoverMenu.from_model (menu);
             actions = new SimpleActionGroup ();
-            actions.add_action_entries (ENTRIES, this);
+            actions.add_action_entries (ENTRIES, null);
             insert_action_group ("win", actions);
 
             foreach (var action in action_accelerators.get_keys ()) {
@@ -76,6 +128,11 @@ namespace Fermion {
             }
 
             clipboard = this.get_clipboard ();
+
+            menu.append ("Copy", "win.action-copy");
+            menu.append ("Paste", "win.action-paste");
+
+            popover.set_menu_model (menu);
         }
     }
 }
