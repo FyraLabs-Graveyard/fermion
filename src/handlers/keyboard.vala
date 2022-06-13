@@ -17,6 +17,10 @@
  */
 
 namespace Fermion {
+    private void action_select_all_handler () {
+        Application.window.terminal.select_all ();
+    }
+    
     private void action_copy_handler () {
         var clipboard = Application.window.clipboard;
         clipboard.set_text (Application.window.terminal.get_selection ());

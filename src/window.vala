@@ -33,11 +33,13 @@ namespace Fermion {
         // Keyboard Actions
         public const string ACTION_COPY = "action-copy";
         public const string ACTION_PASTE = "action-paste";
+        public const string ACTION_SELECT_ALL = "action-select-all";
         private static Gee.MultiMap<string, string> action_accelerators = new Gee.HashMultiMap<string, string> ();
 
         private const ActionEntry[] ENTRIES = {
             { ACTION_COPY, action_copy_handler },
-            { ACTION_PASTE, action_paste_handler }
+            { ACTION_PASTE, action_paste_handler },
+            { ACTION_SELECT_ALL, action_select_all_handler }
         };
 
         private void handle_events () {
@@ -108,8 +110,9 @@ namespace Fermion {
 
         static construct {
             // this is broken and idk why
-            action_accelerators[ACTION_COPY] = "<Ctrl><Shft>C";
+            action_accelerators[ACTION_COPY] = "<Control><Shift>c";
             action_accelerators[ACTION_PASTE] = "<Ctrl><Shft>V";
+            action_accelerators[ACTION_SELECT_ALL] = "<Control><Shift>a";
         }
 
         construct {
@@ -122,7 +125,6 @@ namespace Fermion {
 
             foreach (var action in action_accelerators.get_keys ()) {
                 var accels_array = action_accelerators[action].to_array ();
-                accels_array += null;
 
                 application.set_accels_for_action (@"win.$(action)", accels_array);
             }
@@ -131,6 +133,7 @@ namespace Fermion {
 
             menu.append ("Copy", "win.action-copy");
             menu.append ("Paste", "win.action-paste");
+            menu.append ("Select All", "win.action-select-all");
 
             popover.set_menu_model (menu);
         }
