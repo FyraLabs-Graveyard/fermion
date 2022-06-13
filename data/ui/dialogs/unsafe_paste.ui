@@ -6,8 +6,8 @@
         <property name="default-height">500</property>
         <property name="icon">dialog-warning</property>
         <property name="modal">true</property>
-        <property name="secondary-button">
-            <object class="HeTintButton">
+        <property name="primary-button">
+            <object class="HeFillButton">
                 <property name="label">Paste Anyway</property>
                 <property name="color">red</property>
                 <signal handler="paste_anyway" name="clicked" />
