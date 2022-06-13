@@ -174,10 +174,10 @@ namespace Fermion {
             term.tab = tab;
             //  /* We have to rewrite the tooltip everytime the label changes to override Granite annoying habit of
             //   * automatically changing the tooltip to be the same as the label. */
+            tab.tooltip = term.current_working_directory;
             //  term.tab.notify["label"].connect_after (() => {
             //      term.tab.tooltip = term.current_working_directory;
             //  });
-            tab.ellipsize_mode = Pango.EllipsizeMode.MIDDLE;
 
             return tab;
         }

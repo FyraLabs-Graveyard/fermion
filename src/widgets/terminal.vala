@@ -21,6 +21,7 @@ namespace Fermion {
         GLib.Pid child_pid;
 
         internal const string DEFAULT_LABEL = "Terminal";
+        public string current_working_directory { get; private set; default = "";}
 
         // URL Matching. Yes, GNOME Terminal does this too.
         const string USERCHARS = "-[:alnum:]";

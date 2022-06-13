@@ -1,23 +1,31 @@
 /**
- * Standard tab designed for TabSwitcher
+ * Standard tab designed for TabSwitcher, used to form a tabbed UI
  */
 public class He.Tab : He.Bin {
-    Gtk.Label _label;
+    /**
+     * The label/title of the tab
+     **/
     public string label {
         get { return _label.label; }
         set {
             _label.label = value;
-            _label.set_tooltip_text (value);
+            _label.set_tooltip_markup (value);
         }
     }
+    Gtk.Label _label;
 
+    /**
+     * The Pango marked up text that will be shown in a tooltip when the tab is hovered.
+     **/
     public string tooltip {
         set {
-            _label.set_tooltip_text (value);
+            _label.set_tooltip_markup (value);
         }
     }
 
-    internal TabPage page_container;
+    /**
+     * The TabPage to hold children, to appear when this tab is active
+     **/
     public Gtk.Widget page {
         get {
             return page_container.get_first_child ();
@@ -31,15 +39,26 @@ public class He.Tab : He.Bin {
             value.set_parent (page_container);
         }
     }
+    internal TabPage page_container;
+
+    private bool _is_current_tab = false;
+        internal bool is_current_tab {
+            set {
+                _is_current_tab = value;
+                //  update_close_button_visibility ();
+            }
+        }
 
     He.TabSwitcher tab_switcher {
         get { return (get_parent () as Gtk.Notebook)?.get_parent () as He.TabSwitcher; }
     }
 
-    public Pango.EllipsizeMode ellipsize_mode {
-        get { return _label.ellipsize; }
-        set { _label.ellipsize = value; }
-    }
+    private Gtk.CenterBox tab_layout;
+    public Menu menu { get; set; }
+
+    internal signal void closed ();
+    internal signal void close_others ();
+    internal signal void close_others_right ();
 
     /**
      * Create a new Tab
@@ -54,26 +73,21 @@ public class He.Tab : He.Bin {
         }
     }
 
-    internal signal void closed ();
-    internal signal void close_others ();
-    internal signal void close_others_right ();
-    internal signal void new_window ();
-    internal signal void duplicate ();
-    internal signal void pin_switch ();
-
-    private Gtk.Grid tab_layout;
-
     construct {
         _label = new Gtk.Label (null);
         _label.hexpand = true;
         _label.tooltip_text = label;
         _label.ellipsize = Pango.EllipsizeMode.END;
 
-        tab_layout = new Gtk.Grid ();
-        tab_layout.hexpand = false;
-        tab_layout.orientation = Gtk.Orientation.HORIZONTAL;
-        tab_layout.attach (_label, 0, 0);
-        
+        var close_button = new He.TintButton.from_icon ("list-add-symbolic");
+        close_button.tooltip_text = "Close Tab";
+        close_button.valign = Gtk.Align.CENTER;
+
+        tab_layout = new Gtk.CenterBox ();
+        tab_layout.hexpand = true;
+        tab_layout.set_end_widget (close_button);
+        tab_layout.set_center_widget (_label);
+
         tab_layout.set_parent (this);
 
         page_container = new TabPage (this);
