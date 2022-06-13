@@ -26,9 +26,11 @@ namespace Fermion {
         public Gdk.Clipboard clipboard;
         public SimpleActionGroup actions { get; construct; }
         public Menu menu = new GLib.Menu ();
-        public TerminalWidget terminal { get; set; }
+        public He.TabSwitcher switcher;
 
         private Gtk.PopoverMenu popover { get; set; }
+
+        public GLib.List <TerminalWidget> terminals = new GLib.List <TerminalWidget> ();
 
         // Keyboard Actions
         public const string ACTION_COPY = "action-copy";
@@ -37,12 +39,12 @@ namespace Fermion {
         private static Gee.MultiMap<string, string> action_accelerators = new Gee.HashMultiMap<string, string> ();
 
         private const ActionEntry[] ENTRIES = {
-            { ACTION_COPY, action_copy_handler },
-            { ACTION_PASTE, action_paste_handler },
-            { ACTION_SELECT_ALL, action_select_all_handler }
+            { ACTION_COPY, action_copy },
+            { ACTION_PASTE, action_paste },
+            { ACTION_SELECT_ALL, action_select_all }
         };
 
-        private void handle_events () {
+        private void handle_events (TerminalWidget terminal) {
             Gtk.EventControllerKey controller = new Gtk.EventControllerKey ();
             Gtk.GestureClick rightclick = new Gtk.GestureClick () {
                 button = Gdk.BUTTON_SECONDARY
@@ -90,22 +92,20 @@ namespace Fermion {
         public Window (Fermion.Application app, string? command, string? working_directory = GLib.Environment.get_current_dir ()) {
             Object (app: app);
 
-            terminal = new TerminalWidget ();
-            terminal.set_active_shell (working_directory);
-            box.append (terminal);
+            new_tab (working_directory);
             if (command != null) {
-                terminal.run_program (command, working_directory);
+                new_tab (working_directory, command);
             }
-            handle_events ();
+            // TODO actually get the terminal lol
+            //handle_events (terminals.nth_data (0));
         }
 
         public Window.with_working_directory (Fermion.Application app, string? location = GLib.Environment.get_current_dir ()) {
             Object (app: app);
 
-            terminal = new TerminalWidget ();
-            terminal.set_active_shell (location);
-            box.append (terminal);
-            handle_events ();
+            new_tab (location);
+            // TODO actually get the terminal lol
+            //handle_events (terminals.nth_data (0));
         }
 
         static construct {
@@ -136,6 +136,61 @@ namespace Fermion {
             menu.append ("Select All", "win.action-select-all");
 
             popover.set_menu_model (menu);
+
+            switcher = new He.TabSwitcher ();
+            box.append (switcher);
+        }
+
+        private TerminalWidget new_tab (string dir, string? program = null, bool focus = true) {
+            var widget = new TerminalWidget ();
+
+            var tab = create_tab (
+                dir != null ? Path.get_basename (dir) : TerminalWidget.DEFAULT_LABEL,
+                widget
+            );
+
+            switcher.insert_tab (tab, -1);
+
+            if (focus) {
+                widget.grab_focus ();
+                switcher.current = tab;
+            }
+
+            if (program == null) {
+                if (dir == "") {
+                    widget.set_active_shell ();
+                } else {
+                    widget.set_active_shell (dir);
+                }
+            } else {
+                widget.run_program (program, dir);
+            }
+
+            return widget;
+        }
+
+        private He.Tab create_tab (string label, TerminalWidget term) {
+            var tab = new He.Tab (label, term);
+            term.tab = tab;
+            //  /* We have to rewrite the tooltip everytime the label changes to override Granite annoying habit of
+            //   * automatically changing the tooltip to be the same as the label. */
+            //  term.tab.notify["label"].connect_after (() => {
+            //      term.tab.tooltip = term.current_working_directory;
+            //  });
+            tab.ellipsize_mode = Pango.EllipsizeMode.MIDDLE;
+
+            return tab;
+        }
+
+        private void action_copy () {
+            //print (switcher.current.page.get_type ().to_string ());
+            //action_copy_handler (switcher.current.page as TerminalWidget);
+        }
+        private void action_paste () {
+            action_paste_handler (switcher.current.page as TerminalWidget);
+        }
+        private void action_select_all () {
+            action_select_all_handler (switcher.current.page as TerminalWidget);
         }
     }
 }

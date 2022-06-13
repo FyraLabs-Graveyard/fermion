@@ -3,7 +3,10 @@ sources = [
    'window.vala' ,
    'widgets/terminal.vala',
    'handlers/keyboard.vala',
-   'dialogs/unsafe_paste.vala'
+   'dialogs/unsafe_paste.vala',
+   'lib/TabSwitcher.vala',
+   'lib/Tab.vala',
+   'lib/TabPage.vala'
 ]
 
 config_file = configure_file(

@@ -17,27 +17,27 @@
  */
 
 namespace Fermion {
-    private void action_select_all_handler () {
-        Application.window.terminal.select_all ();
+    private void action_select_all_handler (TerminalWidget terminal) {
+        terminal.select_all ();
     }
     
-    private void action_copy_handler () {
+    private void action_copy_handler (TerminalWidget terminal) {
         var clipboard = Application.window.clipboard;
-        clipboard.set_text (Application.window.terminal.get_selection ());
+        clipboard.set_text (terminal.get_selection ());
     }
 
-    private void action_paste_handler () {
+    private void action_paste_handler (TerminalWidget terminal) {
         var clipboard = Application.window.clipboard;
         clipboard.read_text_async.begin (null, (obj, res) => {
             try {
-                on_get_text (clipboard.read_text_async.end (res));
+                on_get_text (clipboard.read_text_async.end (res), terminal);
             } catch (Error e) {
                 print ("%s\n", e.message);
             }
         });
     }
 
-    private void on_get_text (string? intext) {
+    private void on_get_text (string? intext, TerminalWidget terminal) {
         if (intext == null) {
             return;
         }
@@ -67,10 +67,10 @@ namespace Fermion {
             unsafe_paste_dialog.returned.connect (() => {    
                 unsafe_paste_dialog.destroy ();
 
-                Application.window.terminal.paste_text (text);
+                terminal.paste_text (text);
             });
         } else {
-            Application.window.terminal.paste_text (text);
+            terminal.paste_text (text);
         }
     }
 }

@@ -20,6 +20,8 @@ namespace Fermion {
     public class TerminalWidget : Vte.Terminal {    
         GLib.Pid child_pid;
 
+        internal const string DEFAULT_LABEL = "Terminal";
+
         // URL Matching. Yes, GNOME Terminal does this too.
         const string USERCHARS = "-[:alnum:]";
         const string USERCHARS_CLASS = "[" + USERCHARS + "]";
@@ -47,6 +49,21 @@ namespace Fermion {
             "(?:mailto:)?" + USERCHARS_CLASS + "[" + USERCHARS + ".]*\\@" + HOSTCHARS_CLASS + "+\\." + HOST,
             "(?:news:|man:|info:)[[:alnum:]\\Q^_{|}~!\"#$%&'()*+,./;:=?`\\E]+"
         };
+
+        public He.Tab tab;
+        private string _tab_label;
+        public string tab_label {
+            get {
+                return _tab_label;
+            }
+
+            set {
+                if (value != null) {
+                    _tab_label = value;
+                    tab.label = tab_label;
+                }
+            }
+        }
 
         public TerminalWidget () {
             this.set_hexpand (true);
