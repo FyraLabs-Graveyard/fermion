@@ -120,7 +120,7 @@ namespace Fermion {
 
             popover = new Gtk.PopoverMenu.from_model (menu);
             actions = new SimpleActionGroup ();
-            actions.add_action_entries (ENTRIES, null);
+            actions.add_action_entries (ENTRIES, this);
             insert_action_group ("win", actions);
 
             foreach (var action in action_accelerators.get_keys ()) {
@@ -172,19 +172,13 @@ namespace Fermion {
         private He.Tab create_tab (string label, TerminalWidget term) {
             var tab = new He.Tab (label, term);
             term.tab = tab;
-            //  /* We have to rewrite the tooltip everytime the label changes to override Granite annoying habit of
-            //   * automatically changing the tooltip to be the same as the label. */
             tab.tooltip = term.current_working_directory;
-            //  term.tab.notify["label"].connect_after (() => {
-            //      term.tab.tooltip = term.current_working_directory;
-            //  });
 
             return tab;
         }
 
-        private void action_copy () {
-            //print (switcher.current.page.get_type ().to_string ());
-            //action_copy_handler (switcher.current.page as TerminalWidget);
+        public void action_copy () {
+            action_copy_handler (switcher.current.page as TerminalWidget);
         }
         private void action_paste () {
             action_paste_handler (switcher.current.page as TerminalWidget);
