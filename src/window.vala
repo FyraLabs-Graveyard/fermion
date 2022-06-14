@@ -96,16 +96,12 @@ namespace Fermion {
             if (command != null) {
                 new_tab (working_directory, command);
             }
-            // TODO actually get the terminal lol
-            //handle_events (terminals.nth_data (0));
         }
 
         public Window.with_working_directory (Fermion.Application app, string? location = GLib.Environment.get_current_dir ()) {
             Object (app: app);
 
             new_tab (location);
-            // TODO actually get the terminal lol
-            //handle_events (terminals.nth_data (0));
         }
 
         static construct {
@@ -141,7 +137,7 @@ namespace Fermion {
             box.append (switcher);
         }
 
-        private TerminalWidget new_tab (string dir, string? program = null, bool focus = true) {
+        private TerminalWidget new_tab (string dir, string? program = null) {
             var widget = new TerminalWidget ();
 
             var tab = create_tab (
@@ -151,10 +147,8 @@ namespace Fermion {
 
             switcher.insert_tab (tab, -1);
 
-            if (focus) {
-                widget.grab_focus ();
-                switcher.current = tab;
-            }
+            widget.grab_focus ();
+            switcher.current = tab;
 
             if (program == null) {
                 if (dir == "") {
@@ -165,6 +159,8 @@ namespace Fermion {
             } else {
                 widget.run_program (program, dir);
             }
+
+            handle_events (widget);
 
             return widget;
         }
