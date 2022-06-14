@@ -54,11 +54,32 @@ public class He.Tab : He.Bin {
     }
 
     private Gtk.CenterBox tab_layout;
-    public Menu menu { get; set; }
+    public Menu menu = new GLib.Menu ();
+    private Gtk.PopoverMenu popover { get; set; }
 
     internal signal void closed ();
     internal signal void close_others ();
     internal signal void close_others_right ();
+
+    public SimpleActionGroup actions { get; construct; }
+    private const string ACTION_CLOSE = "action-close";
+    private const string ACTION_CLOSE_OTHER = "action-close-other";
+    private const string ACTION_CLOSE_RIGHT = "action-close-right";
+    private const ActionEntry[] ENTRIES = {
+        { ACTION_CLOSE, action_close },
+        { ACTION_CLOSE_OTHER, action_close_other },
+        { ACTION_CLOSE_RIGHT, action_close_right }
+    };
+
+    private void action_close () {
+        closed ();
+    }
+    private void action_close_other () {
+        close_others ();
+    }
+    private void action_close_right () {
+        close_others_right ();
+    }
 
     /**
      * Create a new Tab
@@ -71,6 +92,8 @@ public class He.Tab : He.Bin {
         if (page != null) {
             this.page = page;
         }
+
+        handle_events ();
     }
 
     construct {
@@ -90,6 +113,17 @@ public class He.Tab : He.Bin {
 
         tab_layout.set_parent (this);
 
+        popover = new Gtk.PopoverMenu.from_model (menu);
+        actions = new SimpleActionGroup ();
+        actions.add_action_entries (ENTRIES, this);
+        this.insert_action_group (label, actions);
+
+        menu.append ("Close", @"$(label).action-close");
+        menu.append ("Close Others", @"$(label).action-close-other");
+        menu.append ("Close Tab to the Right", @"$(label).action-close-right");
+
+        popover.set_menu_model (menu);
+
         page_container = new TabPage (this);
     }
 
@@ -99,5 +133,26 @@ public class He.Tab : He.Bin {
 
     ~Tab () {
         tab_layout.unparent ();
+    }
+
+    private void handle_events () {
+        Gtk.GestureClick click = new Gtk.GestureClick () {
+            button = 0
+        };
+        this.add_controller (click);
+        popover.set_parent (this);
+
+        click.pressed.connect ((n_press, x, y) => {
+            if (n_press != 1) {
+                print ("duplication");
+            } else if (click.get_current_button () == Gdk.BUTTON_SECONDARY) {
+                Gdk.Rectangle rect = {(int)x,
+                                      (int)y,
+                                      0,
+                                      0};
+                popover.set_pointing_to (rect);
+                popover.popup ();
+            }
+        });
     }
 }
