@@ -137,7 +137,7 @@ namespace Fermion {
             box.append (switcher);
         }
 
-        private TerminalWidget new_tab (string dir, string? program = null) {
+        private TerminalWidget new_tab (string? dir, string? program = null) {
             var widget = new TerminalWidget ();
 
             var tab = create_tab (
@@ -151,7 +151,7 @@ namespace Fermion {
             switcher.current = tab;
 
             if (program == null) {
-                if (dir == "") {
+                if (dir == "" || dir == null) {
                     widget.set_active_shell ();
                 } else {
                     widget.set_active_shell (dir);
