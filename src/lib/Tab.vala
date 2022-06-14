@@ -105,7 +105,7 @@ public class He.Tab : He.Bin {
         _label.tooltip_text = label;
         _label.ellipsize = Pango.EllipsizeMode.END;
 
-        var close_button = new He.TintButton.from_icon ("list-add-symbolic");
+        var close_button = new He.TintButton.from_icon ("window-close");
         close_button.tooltip_text = "Close Tab";
         close_button.valign = Gtk.Align.CENTER;
 
