@@ -115,6 +115,14 @@ namespace Fermion {
             }
         }
 
+        public void end_process () {
+            while (Posix.kill (this.child_pid, 0) == 0) {
+                Posix.kill (this.child_pid, Posix.Signal.HUP);
+                Posix.kill (this.child_pid, Posix.Signal.TERM);
+                Thread.usleep (100);
+            }
+        }
+
         public void set_active_shell (string? dir = GLib.Environment.get_current_dir ()) {
             string shell = Vte.get_user_shell ();
             string?[] envv = null;

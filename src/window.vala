@@ -44,49 +44,8 @@ namespace Fermion {
             { ACTION_SELECT_ALL, action_select_all }
         };
 
-        private void handle_events (TerminalWidget terminal) {
-            Gtk.EventControllerKey controller = new Gtk.EventControllerKey ();
-            Gtk.GestureClick rightclick = new Gtk.GestureClick () {
-                button = Gdk.BUTTON_SECONDARY
-            };
-            terminal.add_controller (rightclick);
-            terminal.add_controller (controller);
-            popover.set_parent (terminal);
-
-            rightclick.pressed.connect ((n_press, x, y) => {
-                Gdk.Rectangle rect = {(int)x,
-                                      (int)y,
-                                      0,
-                                      0};
-                popover.set_pointing_to (rect);
-                popover.popup ();
-            });
-
-            controller.key_pressed.connect ((keyval, keycode, state) => {
-                switch (keyval) {
-                    case Gdk.Key.Menu:
-                        long col, row;
-                        terminal.get_cursor_position (out col, out row);
-                        var cell_width = terminal.get_char_width ();
-                        var cell_height = terminal.get_char_height ();
-                        var vadj_val = terminal.get_vadjustment ().get_value ();
-
-                        Gdk.Rectangle rect = {(int)(col * cell_width),
-                                            (int)((row - vadj_val) * cell_height),
-                                            (int)cell_width,
-                                            (int)cell_height};
-
-                        popover.set_pointing_to (rect);
-                        popover.popup ();
-                        break;
-                    default:
-                        break;
-                }
-
-                return false;
-            });
-
-            terminal.grab_focus ();
+        private TerminalWidget get_term_widget (He.Tab tab) {
+            return (TerminalWidget)tab.page;
         }
         
         public Window (Fermion.Application app, string? command, string? working_directory = GLib.Environment.get_current_dir ()) {
@@ -135,6 +94,84 @@ namespace Fermion {
 
             switcher = new He.TabSwitcher ();
             box.append (switcher);
+
+            switcher.tab_added.connect (on_tab_added);
+            switcher.tab_removed.connect (on_tab_removed);
+            switcher.tab_switched.connect (on_switch_page);
+            switcher.new_tab_requested.connect (on_new_tab_requested);
+        }
+
+
+        private void on_tab_added (He.Tab tab) {
+            var widget = get_term_widget (tab);
+            terminals.append (widget);
+        }
+
+        private void on_tab_removed (He.Tab tab) {
+            var widget = get_term_widget (tab);
+            if (switcher.n_tabs == 0) {
+                on_destroy ();
+            } else {
+                terminals.remove (widget);
+            }
+        }
+
+        private void on_new_tab_requested () {
+            new_tab (Environment.get_home_dir ());
+        }
+
+        private void on_switch_page (He.Tab? old_tab, He.Tab new_tab) {
+            // TODO maybe threadservice
+            Idle.add (() => {
+                get_term_widget (new_tab).grab_focus ();
+                return false;
+            });
+        }
+
+
+        private void handle_events (TerminalWidget terminal) {
+            Gtk.EventControllerKey controller = new Gtk.EventControllerKey ();
+            Gtk.GestureClick rightclick = new Gtk.GestureClick () {
+                button = Gdk.BUTTON_SECONDARY
+            };
+            terminal.add_controller (rightclick);
+            terminal.add_controller (controller);
+            popover.set_parent (terminal);
+
+            rightclick.pressed.connect ((n_press, x, y) => {
+                Gdk.Rectangle rect = {(int)x,
+                                      (int)y,
+                                      0,
+                                      0};
+                popover.set_pointing_to (rect);
+                popover.popup ();
+            });
+
+            controller.key_pressed.connect ((keyval, keycode, state) => {
+                switch (keyval) {
+                    case Gdk.Key.Menu:
+                        long col, row;
+                        terminal.get_cursor_position (out col, out row);
+                        var cell_width = terminal.get_char_width ();
+                        var cell_height = terminal.get_char_height ();
+                        var vadj_val = terminal.get_vadjustment ().get_value ();
+
+                        Gdk.Rectangle rect = {(int)(col * cell_width),
+                                            (int)((row - vadj_val) * cell_height),
+                                            (int)cell_width,
+                                            (int)cell_height};
+
+                        popover.set_pointing_to (rect);
+                        popover.popup ();
+                        break;
+                    default:
+                        break;
+                }
+
+                return false;
+            });
+
+            terminal.grab_focus ();
         }
 
         private TerminalWidget new_tab (string? dir, string? program = null) {
@@ -173,7 +210,14 @@ namespace Fermion {
             return tab;
         }
 
-        public void action_copy () {
+        private void on_destroy () {
+            foreach (unowned TerminalWidget terminal in terminals) {
+                terminal.end_process ();
+            }
+            this.destroy ();
+        }
+
+        private void action_copy () {
             action_copy_handler (switcher.current.page as TerminalWidget);
         }
         private void action_paste () {

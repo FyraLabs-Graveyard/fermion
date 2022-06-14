@@ -21,7 +21,8 @@ deps = [
     dependency('gee-0.8'),
     # TODO add this as a subproject or smth, or make a vte-gtk4 package for tau. idk
     dependency('vte-2.91-gtk4'),
-    dependency('libpcre2-8')
+    dependency('libpcre2-8'),
+    meson.get_compiler('vala').find_library('posix')
 ]
 
 add_project_arguments(['--define', 'VTE_0_68_GTK4'], language : 'vala')
