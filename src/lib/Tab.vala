@@ -53,8 +53,11 @@ public class He.Tab : He.Bin {
         get { return (get_parent () as Gtk.Notebook)?.get_parent () as He.TabSwitcher; }
     }
 
+    /**
+     * The menu appearing when the tab is clicked
+     */
+    public GLib.Menu menu { get; private set; }
     private Gtk.CenterBox tab_layout;
-    public Menu menu = new GLib.Menu ();
     private Gtk.PopoverMenu popover { get; set; }
 
     internal signal void closed ();
@@ -113,6 +116,7 @@ public class He.Tab : He.Bin {
 
         tab_layout.set_parent (this);
 
+        menu = new GLib.Menu ();
         popover = new Gtk.PopoverMenu.from_model (menu);
         actions = new SimpleActionGroup ();
         actions.add_action_entries (ENTRIES, this);

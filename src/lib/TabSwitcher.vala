@@ -68,6 +68,12 @@ public class He.TabSwitcher : He.Bin, Gtk.Buildable {
         return index;
     }
 
+    /**
+     * The menu appearing when the tab bar is clicked on a blank space
+     */
+    public GLib.Menu menu { get; private set; }
+
+    private Gtk.PopoverMenu popover { get; set; }
     private Tab? old_tab; //stores a reference for tab_switched
     private const int MIN_TAB_WIDTH = 80;
     private const int MAX_TAB_WIDTH = 220;
@@ -78,14 +84,25 @@ public class He.TabSwitcher : He.Bin, Gtk.Buildable {
     public signal void tab_switched (Tab? old_tab, Tab new_tab);
     public signal void new_tab_requested ();
 
+    public SimpleActionGroup actions { get; construct; }
+    private const string ACTION_NEW_TAB = "action-new-tab";
+    private const ActionEntry[] ENTRIES = {
+        { ACTION_NEW_TAB, action_new_tab }
+    };
+
+    private void action_new_tab () {
+        new_tab_requested ();
+    }
+
     /**
      * Create a new TabSwitcher
      */
-    public TabSwitcher () {}
+    public TabSwitcher () {
+        handle_events ();
+    }
 
     construct {
         notebook = new Gtk.Notebook ();
-        notebook.set_can_focus (false);
         notebook.set_scrollable (true);
         notebook.set_show_border (false);
         _tab_bar_behavior = TabBarBehavior.ALWAYS;
@@ -96,6 +113,17 @@ public class He.TabSwitcher : He.Bin, Gtk.Buildable {
         add_button.tooltip_text = _("New Tab");
 
         notebook.set_action_widget (add_button, Gtk.PackType.END);
+
+        menu = new GLib.Menu ();
+
+        popover = new Gtk.PopoverMenu.from_model (menu);
+        actions = new SimpleActionGroup ();
+        actions.add_action_entries (ENTRIES, this);
+        this.insert_action_group ("hetabswitcher", actions);
+
+        menu.append ("New Tab", "hetabswitcher.action-new-tab");
+
+        popover.set_menu_model (menu);
 
         add_button.clicked.connect (() => {
             new_tab_requested ();
@@ -120,6 +148,27 @@ public class He.TabSwitcher : He.Bin, Gtk.Buildable {
 
     ~TabSwitcher () {
         notebook.unparent ();
+    }
+
+    private void handle_events () {
+        Gtk.GestureClick click = new Gtk.GestureClick () {
+            button = 0
+        };
+        this.add_controller (click);
+        popover.set_parent (this);
+
+        click.pressed.connect ((n_press, x, y) => {
+            if (n_press != 1) {
+                new_tab_requested ();
+            } else if (click.get_current_button () == Gdk.BUTTON_SECONDARY) {
+                Gdk.Rectangle rect = {(int)x,
+                                      (int)y,
+                                      0,
+                                      0};
+                popover.set_pointing_to (rect);
+                popover.popup ();
+            }
+        });
     }
 
     void on_switch_page (Gtk.Widget page, uint pagenum) {
@@ -154,13 +203,13 @@ public class He.TabSwitcher : He.Bin, Gtk.Buildable {
     }
 
     private void insert_callbacks (Tab tab) {
-        //  tab.closed.connect (on_tab_closed);
+        tab.closed.connect (on_tab_closed);
         tab.close_others.connect (on_close_others);
         tab.close_others_right.connect (on_close_others_right);
     }
 
     private void remove_callbacks (Tab tab) {
-        //  tab.closed.disconnect (on_tab_closed);
+        tab.closed.disconnect (on_tab_closed);
         tab.close_others.disconnect (on_close_others);
         tab.close_others_right.disconnect (on_close_others_right);
     }
