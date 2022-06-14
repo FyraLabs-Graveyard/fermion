@@ -47,6 +47,12 @@ public class He.TabSwitcher : He.Bin, Gtk.Buildable {
     }
     private TabBarBehavior _tab_bar_behavior;
 
+    /**
+     * The position in the switcher of the tab
+     */
+    public int get_tab_position (Tab tab) {
+        return notebook.page_num (tab.page_container);
+    }
 
     /**
      * The current visible tab
@@ -66,6 +72,16 @@ public class He.TabSwitcher : He.Bin, Gtk.Buildable {
         tab.set_size_request (tab_width, -1);
         this.recalc_size ();
         return index;
+    }
+
+    /**
+     * Removes a tab from the TabSwitcher.
+     */
+    public void remove_tab (Tab tab) {
+        var pos = get_tab_position (tab);
+
+        if (pos != -1)
+            notebook.remove_page (pos);
     }
 
     /**
@@ -233,6 +249,15 @@ public class He.TabSwitcher : He.Bin, Gtk.Buildable {
                 is_to_the_right = true;
             }
         });
+    }
+
+    private void on_tab_closed (Tab tab) {
+        var pos = get_tab_position (tab);
+
+        remove_tab (tab);
+
+        if (pos != -1 && tab.page.get_parent () != null)
+            tab.page.unparent ();
     }
 
     private void update_tabs_visibility () {
