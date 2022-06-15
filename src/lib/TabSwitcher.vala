@@ -256,6 +256,8 @@ public class He.TabSwitcher : He.Bin, Gtk.Buildable {
 
         remove_tab (tab);
 
+        recalc_size ();
+
         if (pos != -1 && tab.page.get_parent () != null)
             tab.page.unparent ();
     }
@@ -274,13 +276,16 @@ public class He.TabSwitcher : He.Bin, Gtk.Buildable {
             return;
         }
 
-        var offset = 130;
-        tab_width = (this.get_allocated_width () - offset) / n_tabs;
+        tab_width = this.get_allocated_width () / n_tabs;
 
-        if (tab_width < MAX_TAB_WIDTH) {
-            tab_width = MAX_TAB_WIDTH;
-        } else {
+        if (tab_width <= MAX_TAB_WIDTH) {
             tab_width = MIN_TAB_WIDTH;
+        } else {
+            tab_width = MAX_TAB_WIDTH;
+        }
+
+        if (n_tabs == 1) {
+            tab_width = MAX_TAB_WIDTH;
         }
 
         foreach (var tab in tabs.copy ()) {

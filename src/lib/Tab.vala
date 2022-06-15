@@ -109,6 +109,10 @@ public class He.Tab : He.Bin {
         close_button.tooltip_text = "Close Tab";
         close_button.valign = Gtk.Align.CENTER;
 
+        close_button.clicked.connect (() => {
+            closed ();
+        });
+
         tab_layout = new Gtk.CenterBox ();
         tab_layout.hexpand = true;
         tab_layout.set_end_widget (close_button);
