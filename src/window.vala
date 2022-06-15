@@ -124,6 +124,8 @@ namespace Fermion {
             // TODO maybe threadservice
             Idle.add (() => {
                 get_term_widget (new_tab).grab_focus ();
+                popover.unparent ();
+                popover.set_parent (new_tab.page as TerminalWidget);
                 return false;
             });
         }
@@ -136,6 +138,7 @@ namespace Fermion {
             };
             terminal.add_controller (rightclick);
             terminal.add_controller (controller);
+            popover.unparent ();
             popover.set_parent (terminal);
 
             rightclick.pressed.connect ((n_press, x, y) => {
