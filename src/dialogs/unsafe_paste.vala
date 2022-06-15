@@ -32,7 +32,7 @@ namespace Fermion {
                 subtitle: @"<i><tt>$(pasted_text)</tt></i>"
             );
 
-            set_info (@"Copying commands from the internet can be dangerous. Be sure you understand what each part of the pasted text does before continuing.\n\nYou may disable this dialog in Settings");
+            info = @"Copying commands from the internet can be dangerous. Be sure you understand what each part of the pasted text does before continuing.\n\nYou may disable this dialog in Settings";
 
             this.set_parent (parent);
 
