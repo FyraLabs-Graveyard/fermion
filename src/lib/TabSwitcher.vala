@@ -93,7 +93,7 @@ public class He.TabSwitcher : He.Bin, Gtk.Buildable {
     private Gtk.PopoverMenu popover { get; set; }
     private Tab? old_tab; //stores a reference for tab_switched
     private const int MIN_TAB_WIDTH = 80;
-    private const int MAX_TAB_WIDTH = 220;
+    private const int MAX_TAB_WIDTH = 150;
     private int tab_width = MAX_TAB_WIDTH;
 
     public signal void tab_added (Tab tab);
@@ -277,7 +277,8 @@ public class He.TabSwitcher : He.Bin, Gtk.Buildable {
             return;
         }
 
-        tab_width = this.get_allocated_width () / n_tabs;
+        var offset = 100;
+        tab_width = (this.get_allocated_width () - offset) / n_tabs;
 
         if (tab_width <= MAX_TAB_WIDTH) {
             tab_width = MIN_TAB_WIDTH;
