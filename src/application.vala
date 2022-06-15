@@ -49,6 +49,10 @@ namespace Fermion {
             { null }
         };
 
+        public Application () {
+            resource_base_path = "/co/tauos/Fermion";
+        }
+
         construct {
             settings = new GLib.Settings (Config.APP_SETTINGS);
             application_id = Config.APP_ID;

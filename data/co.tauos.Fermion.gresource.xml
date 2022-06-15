@@ -4,6 +4,8 @@
     <file alias="window.ui">ui/window.ui</file>
     <file alias="dialogs/unsafe_paste.ui">ui/dialogs/unsafe_paste.ui</file>
     <file alias="gtk/help-overlay.ui">ui/gtk/help-overlay.ui</file>
+    <file alias="style.css">style/style.css</file>
+    <file alias="style-dark.css">style/style-dark.css</file>
   </gresource>
 
   <!-- Icons: Every single custom icon that's used in the UI should be listed here, and in the actions folder -->

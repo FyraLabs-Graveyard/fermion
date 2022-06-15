@@ -69,6 +69,7 @@ public class He.TabSwitcher : He.Bin, Gtk.Buildable {
      */
     public uint insert_tab (Tab tab, int index) {
         index = this.notebook.insert_page (tab.page_container, tab, index <= -1 ? n_tabs : index);
+        tab.get_parent ().add_css_class ("tab");
         tab.set_size_request (tab_width, -1);
         this.recalc_size ();
         return index;
