@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+    <requires lib="gtk" version="4.0" />
+    <template class="FermionPreferences" parent="HePreferenceWindow">
+        <child>
+            <object class="HePreferencePage">
+                <property name="title">General</property>
+                <child>
+                    <object class="HeContentList">
+                        
+                    </object>
+                </child>
+            </object>
+        </child>
+        <child>
+            <object class="HePreferencePage">
+                <property name="title">Profiles</property>
+                <child>
+                    <object class="HeContentList">
+                        
+                    </object>
+                </child>
+            </object>
+        </child>
+
+                <child>
+                    <object class="HeContentList">
+                        
+                    </object>
+                </child>
+    </template>
+</interface>
