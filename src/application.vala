@@ -31,6 +31,7 @@ namespace Fermion {
 
         private const GLib.ActionEntry app_entries[] = {
             { "about", on_about_action },
+            { "preferences", on_preferences_action },
             { "quit", quit }
         };
 
@@ -64,6 +65,9 @@ namespace Fermion {
             
             add_action_entries (app_entries, this);
             set_accels_for_action ("app.quit", {"<primary>q"});
+
+            // TODO delete this once it's added to LibHelium
+            typeof (He.PreferencePage).ensure ();
         }
 
         public override int command_line (ApplicationCommandLine command_line) {
@@ -169,6 +173,10 @@ namespace Fermion {
                                    "website-label", "tauOS Website",
                                    "license-type", Gtk.License.GPL_3_0,
                                    "version", Config.VERSION);
+        }
+
+        private void on_preferences_action () {
+            new Fermion.Preferences (window);
         }
     }
 }
