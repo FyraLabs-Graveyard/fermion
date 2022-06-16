@@ -6,6 +6,7 @@ public class He.PreferenceWindow : He.Window, Gtk.Buildable {
     private Gtk.Stack stack = new Gtk.Stack ();
     private He.AppBar appbar = new He.AppBar ();
     private He.ViewSwitcher switcher = new He.ViewSwitcher ();
+    private He.ViewTitle viewtitle = new He.ViewTitle ();
 
     /**
      * Add ContentList or PreferencePage children to this window
@@ -51,6 +52,10 @@ public class He.PreferenceWindow : He.Window, Gtk.Buildable {
     }
 
     construct {
+        this.stack.pages.items_changed.connect (on_pages_changed);
+
+        viewtitle.label = "Settings";
+
         appbar.show_buttons = true;
         appbar.flat = true;
         appbar.show_back = false;
@@ -74,9 +79,35 @@ public class He.PreferenceWindow : He.Window, Gtk.Buildable {
         this.set_focusable (true);
 
         this.set_modal (true);
+
+        on_pages_changed (0, 0, this.stack.pages.get_n_items ());
     }
 
     ~PreferenceWindow () {
         this.unparent ();
+    }
+
+    private void on_pages_changed (uint position, uint removed, uint added) {
+        if (this.stack.pages.get_n_items () <= 1) {
+            if (this.switcher.get_parent () != null && this.switcher.get_parent () == this.box) {
+                this.box.remove (switcher);
+                this.box.insert_child_after (viewtitle, appbar);
+            } else if (this.viewtitle.get_parent () == null) {
+                this.box.insert_child_after (viewtitle, appbar);
+            } else {
+                // Everything has been added
+                return;
+            }
+        } else {
+            if (this.viewtitle.get_parent () != null && this.viewtitle.get_parent () == this.box) {
+                this.box.remove (viewtitle);
+                this.box.insert_child_after (switcher, appbar);
+            } else if (this.switcher.get_parent () == null) {
+                this.box.insert_child_after (switcher, appbar);
+            } else {
+                // Everything has been added
+                return;
+            }
+        }
     }
 }
