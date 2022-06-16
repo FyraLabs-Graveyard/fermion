@@ -71,7 +71,6 @@ public class He.TabSwitcher : He.Bin, Gtk.Buildable {
         index = this.notebook.insert_page (tab.page_container, tab, index <= -1 ? n_tabs : index);
         tab.get_parent ().add_css_class ("tab");
         tab.set_size_request (tab_width, -1);
-        this.recalc_size ();
         return index;
     }
 
@@ -127,6 +126,7 @@ public class He.TabSwitcher : He.Bin, Gtk.Buildable {
         var add_button = new He.TintButton.from_icon ("list-add-symbolic");
         add_button.margin_top = 6;
         add_button.margin_bottom = 6;
+        add_button.margin_end = 6;
         add_button.tooltip_text = _("New Tab");
 
         notebook.set_action_widget (add_button, Gtk.PackType.END);
@@ -257,8 +257,6 @@ public class He.TabSwitcher : He.Bin, Gtk.Buildable {
 
         remove_tab (tab);
 
-        recalc_size ();
-
         if (pos != -1 && tab.page.get_parent () != null)
             tab.page.unparent ();
     }
@@ -270,29 +268,5 @@ public class He.TabSwitcher : He.Bin, Gtk.Buildable {
             notebook.show_tabs = false;
         else if (_tab_bar_behavior == TabBarBehavior.ALWAYS)
             notebook.show_tabs = true;
-    }
-
-    private void recalc_size () {
-        if (n_tabs == 0) {
-            return;
-        }
-
-        var offset = 100;
-        tab_width = (this.get_allocated_width () - offset) / n_tabs;
-
-        if (tab_width <= MAX_TAB_WIDTH) {
-            tab_width = MIN_TAB_WIDTH;
-        } else {
-            tab_width = MAX_TAB_WIDTH;
-        }
-
-        if (n_tabs == 1) {
-            tab_width = MAX_TAB_WIDTH;
-        }
-
-        foreach (var tab in tabs.copy ()) {
-            tab.set_size_request (tab_width, -1);
-            tab.queue_resize ();
-        }
     }
 }

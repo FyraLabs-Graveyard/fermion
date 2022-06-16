@@ -134,6 +134,8 @@ public class He.Tab : He.Bin {
         popover.set_menu_model (menu);
 
         page_container = new TabPage (this);
+
+        this.set_hexpand (true);
     }
 
     static construct {
