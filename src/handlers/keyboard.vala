@@ -23,7 +23,7 @@ namespace Fermion {
     
     private void action_copy_handler (TerminalWidget terminal) {
         var clipboard = Application.window.clipboard;
-        clipboard.set_text (terminal.get_selection ());
+        clipboard.set_text (terminal.get_text_selected ());
     }
 
     private void action_paste_handler (TerminalWidget terminal) {
