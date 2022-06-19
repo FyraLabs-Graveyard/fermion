@@ -5,11 +5,6 @@ sources = [
    'widgets/terminal.vala',
    'handlers/keyboard.vala',
    'dialogs/unsafe_paste.vala',
-   'lib/TabSwitcher.vala',
-   'lib/Tab.vala',
-   'lib/TabPage.vala',
-   'lib/PreferenceWindow.vala',
-   'lib/PreferencePage.vala'
 ]
 
 config_file = configure_file(

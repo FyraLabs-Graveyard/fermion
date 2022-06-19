@@ -65,9 +65,6 @@ namespace Fermion {
             
             add_action_entries (app_entries, this);
             set_accels_for_action ("app.quit", {"<primary>q"});
-
-            // TODO delete this once it's added to LibHelium
-            typeof (He.PreferencePage).ensure ();
         }
 
         public override int command_line (ApplicationCommandLine command_line) {
