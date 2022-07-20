@@ -27,7 +27,13 @@
                     </object>
                 </child>
                 <child>
-                    <object class="GtkBox" id="box"></object>
+                    <object class="HeTabSwitcher" id="switcher">
+                        <signal name="tab-added" handler="on_tab_added" swapped="no" />
+                        <signal name="tab-removed" handler="on_tab_removed" swapped="no" />
+                        <signal name="tab-switched" handler="on_tab_switched" swapped="no" />
+                        <signal name="tab-duplicated" handler="on_tab_duplicated" swapped="no" />
+                        <signal name="new-tab-requested" handler="on_new_tab_requested" swapped="no" />
+                    </object>
                 </child>
             </object>
         </child>

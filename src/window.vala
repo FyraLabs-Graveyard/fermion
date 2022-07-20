@@ -19,14 +19,12 @@
 namespace Fermion {
     [GtkTemplate (ui = "/co/tauos/Fermion/window.ui")]
     public class Window : He.ApplicationWindow {       
-        [GtkChild]
-        private unowned Gtk.Box box;
+        [GtkChild] private unowned He.TabSwitcher switcher;
 
         public Fermion.Application app { get; construct; }
         public Gdk.Clipboard clipboard;
         public SimpleActionGroup actions { get; construct; }
         public Menu menu = new GLib.Menu ();
-        public He.TabSwitcher switcher;
 
         private Gtk.PopoverMenu popover { get; set; }
 
@@ -94,23 +92,15 @@ namespace Fermion {
             menu.append ("Select All", "win.action-select-all");
 
             popover.set_menu_model (menu);
-
-            switcher = new He.TabSwitcher ();
-            box.append (switcher);
-
-            switcher.tab_added.connect (on_tab_added);
-            switcher.tab_removed.connect (on_tab_removed);
-            switcher.tab_switched.connect (on_switch_page);
-            switcher.tab_duplicated.connect (on_tab_duplicated);
-            switcher.new_tab_requested.connect (on_new_tab_requested);
         }
 
-
+        [GtkCallback]
         private void on_tab_added (He.Tab tab) {
             var widget = get_term_widget (tab);
             terminals.append (widget);
         }
 
+        [GtkCallback]
         private void on_tab_removed (He.Tab tab) {
             var widget = get_term_widget (tab);
             if (switcher.n_tabs == 0) {
@@ -120,16 +110,19 @@ namespace Fermion {
             }
         }
 
+        [GtkCallback]
         private void on_tab_duplicated (He.Tab tab) {
             var widget = get_term_widget (tab);
             new_tab (widget.get_shell_location ());
         }
 
+        [GtkCallback]
         private void on_new_tab_requested () {
             new_tab (Environment.get_home_dir ());
         }
 
-        private void on_switch_page (He.Tab? old_tab, He.Tab new_tab) {
+        [GtkCallback]
+        private void on_tab_switched (He.Tab? old_tab, He.Tab new_tab) {
             // TODO maybe threadservice
             Idle.add (() => {
                 get_term_widget (new_tab).grab_focus ();
@@ -138,7 +131,6 @@ namespace Fermion {
                 return false;
             });
         }
-
 
         private void handle_events (TerminalWidget terminal) {
             Gtk.EventControllerKey controller = new Gtk.EventControllerKey ();

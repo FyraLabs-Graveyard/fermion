@@ -51,6 +51,7 @@ namespace Fermion {
         };
 
         public Application () {
+            Object ();
             resource_base_path = "/co/tauos/Fermion";
         }
 
