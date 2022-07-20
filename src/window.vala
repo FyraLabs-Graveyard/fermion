@@ -36,12 +36,14 @@ namespace Fermion {
         public const string ACTION_COPY = "action-copy";
         public const string ACTION_PASTE = "action-paste";
         public const string ACTION_SELECT_ALL = "action-select-all";
+        public const string ACTION_DUPLICATE_TAB = "action-duplicate-tab";
         private static Gee.MultiMap<string, string> action_accelerators = new Gee.HashMultiMap<string, string> ();
 
         private const ActionEntry[] ENTRIES = {
             { ACTION_COPY, action_copy },
             { ACTION_PASTE, action_paste },
-            { ACTION_SELECT_ALL, action_select_all }
+            { ACTION_SELECT_ALL, action_select_all },
+            { ACTION_DUPLICATE_TAB, action_duplicate_tab },
         };
 
         private TerminalWidget get_term_widget (He.Tab tab) {
@@ -68,6 +70,7 @@ namespace Fermion {
             action_accelerators[ACTION_COPY] = "<Control><Shift>c";
             action_accelerators[ACTION_PASTE] = "<Ctrl><Shft>V";
             action_accelerators[ACTION_SELECT_ALL] = "<Control><Shift>a";
+            action_accelerators[ACTION_DUPLICATE_TAB] = "<Control><Shift>d";
         }
 
         construct {
@@ -98,6 +101,7 @@ namespace Fermion {
             switcher.tab_added.connect (on_tab_added);
             switcher.tab_removed.connect (on_tab_removed);
             switcher.tab_switched.connect (on_switch_page);
+            switcher.tab_duplicated.connect (on_tab_duplicated);
             switcher.new_tab_requested.connect (on_new_tab_requested);
         }
 
@@ -114,6 +118,11 @@ namespace Fermion {
             } else {
                 terminals.remove (widget);
             }
+        }
+
+        private void on_tab_duplicated (He.Tab tab) {
+            var widget = get_term_widget (tab);
+            new_tab (widget.get_shell_location ());
         }
 
         private void on_new_tab_requested () {
@@ -228,6 +237,9 @@ namespace Fermion {
         }
         private void action_select_all () {
             action_select_all_handler (switcher.current.page as TerminalWidget);
+        }
+        private void action_duplicate_tab () {
+            new_tab ((switcher.current.page as TerminalWidget)?.get_shell_location ());
         }
     }
 }
