@@ -134,6 +134,18 @@ namespace Fermion {
             this.spawn_async (Vte.PtyFlags.DEFAULT, dir, { shell }, envv, SpawnFlags.SEARCH_PATH, null, -1, null, terminal_callback);
         }
 
+        public string get_shell_location () {
+            int pid = (!) (this.child_pid);
+
+            try {
+                // I wonder if Vte provides this, but I don't have Vte docs atm
+                // TODO Check if implemented in Vte
+                return GLib.FileUtils.read_link ("/proc/%d/cwd".printf (pid));
+            } catch (GLib.FileError error) {
+                return "";
+            }
+        }
+
         private void clickable (string[] str) {
             foreach (unowned string exp in str) {
                 try {
