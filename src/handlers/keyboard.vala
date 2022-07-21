@@ -22,12 +22,13 @@ namespace Fermion {
     }
     
     private void action_copy_handler (TerminalWidget terminal) {
-        var clipboard = Application.window.clipboard;
+        var clipboard = ((Window) ((Gtk.Application) GLib.Application.get_default ()).active_window).clipboard;
         clipboard.set_text (terminal.get_text_selected ());
     }
 
     private void action_paste_handler (TerminalWidget terminal) {
-        var clipboard = Application.window.clipboard;
+        // idk, this works
+        var clipboard = ((Window) ((Gtk.Application) GLib.Application.get_default ()).active_window).clipboard;
         clipboard.read_text_async.begin (null, (obj, res) => {
             try {
                 on_get_text (clipboard.read_text_async.end (res), terminal);
@@ -59,7 +60,7 @@ namespace Fermion {
 
         if (unsafe_warning != null) {
             var unsafe_paste_dialog = new UnsafePasteDialog (
-                Application.window,
+                (Window) ((Gtk.Application) GLib.Application.get_default ()).active_window,
                 unsafe_warning,
                 text
             );

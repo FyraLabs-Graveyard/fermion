@@ -28,6 +28,7 @@ namespace Fermion {
 
         private Gtk.PopoverMenu popover { get; set; }
 
+        public TerminalWidget current_terminal { get; private set; default = null; }
         public GLib.List <TerminalWidget> terminals = new GLib.List <TerminalWidget> ();
 
         // Keyboard Actions
@@ -123,6 +124,8 @@ namespace Fermion {
 
         [GtkCallback]
         private void on_tab_switched (He.Tab? old_tab, He.Tab new_tab) {
+            current_terminal = get_term_widget (new_tab);
+
             // TODO maybe threadservice
             Idle.add (() => {
                 get_term_widget (new_tab).grab_focus ();
@@ -178,7 +181,7 @@ namespace Fermion {
             terminal.grab_focus ();
         }
 
-        private TerminalWidget new_tab (string? dir, string? program = null) {
+        public TerminalWidget new_tab (string? dir, string? program = null) {
             var widget = new TerminalWidget ();
 
             var tab = create_tab (
@@ -231,7 +234,7 @@ namespace Fermion {
             action_select_all_handler (switcher.current.page as TerminalWidget);
         }
         private void action_duplicate_tab () {
-            new_tab ((switcher.current.page as TerminalWidget)?.get_shell_location ());
+            new_tab (current_terminal.get_shell_location ());
         }
     }
 }

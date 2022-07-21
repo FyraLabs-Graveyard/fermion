@@ -19,7 +19,8 @@
 namespace Fermion {
     public class Application : He.Application {
         public static GLib.Settings settings;
-        public static Fermion.Window window;
+
+        private List<Fermion.Window> windows = new List<Fermion.Window> ();
 
         public static string? working_directory = null;
         [CCode (array_length = false, array_null_terminated = true)]
@@ -28,6 +29,7 @@ namespace Fermion {
 
         private static bool option_help = false;
         private static bool option_version = false;
+        private static bool option_new_window = false;
 
         private const GLib.ActionEntry app_entries[] = {
             { "about", on_about_action },
@@ -43,6 +45,8 @@ namespace Fermion {
              *  to  the --help flag */
             { "commandline", 'x', 0, OptionArg.STRING, ref command_x,
               N_("Run remainder of line as a command in terminal. Can also use '--' as flag"), "COMMAND_LINE" },
+            { "newwindow", 'n', 0, OptionArg.NONE, ref option_new_window,
+              N_("Open a new terminal window"), null },
             { "help", 'h', 0, OptionArg.NONE, ref option_help, N_("Show help"), null },
             { "working-directory", 'w', 0, OptionArg.FILENAME, ref working_directory,
               N_("Set shell working directory"), "DIR" },
@@ -66,6 +70,22 @@ namespace Fermion {
             
             add_action_entries (app_entries, this);
             set_accels_for_action ("app.quit", {"<primary>q"});
+        }
+
+        public override void window_added (Gtk.Window window) {
+            windows.append (window as Fermion.Window);
+            base.window_added (window);
+        }
+
+        public override void window_removed (Gtk.Window window) {
+            windows.remove (window as Fermion.Window);
+            base.window_added (window);
+        }
+
+        private Fermion.Window? get_last_window () {
+            uint length = windows.length ();
+
+            return length > 0 ? windows.nth_data (length - 1) : null;
         }
 
         public override int command_line (ApplicationCommandLine command_line) {
@@ -127,8 +147,8 @@ namespace Fermion {
                     run_command_line (commandline, working_directory);
                 } else if (command_x != null) {
                     const string WARNING = "Usage: --commandline=[COMMANDLINE] without spaces around '='\r\n\r\n";
-                    print ("%s\n", WARNING);
                     start_terminal_with_working_directory (working_directory);
+                    get_last_window ().current_terminal.feed (WARNING.data);
                 } else {
                     start_terminal_with_working_directory (working_directory);
                 }
@@ -138,21 +158,24 @@ namespace Fermion {
         }
 
         private void run_command_line (string command_line, string? working_directory = null) {
-            window = (Fermion.Window) this.active_window;
-            if (window == null) {
-                window = new Window(this, command_line, working_directory);
+            Fermion.Window? window = get_last_window ();
+
+            if (window == null || option_new_window) {
+                print ("yay");
+                window = new Window (this, command_line, working_directory);
             } else {
-                print ("Fermion already started");
+                window.new_tab (working_directory, command_line);
             }
             window.present ();
         }
 
         private void start_terminal_with_working_directory (string? working_directory) {
-            window = (Fermion.Window) this.active_window;
-            if (window == null) {
+            Fermion.Window? window = get_last_window ();
+
+            if (window == null || option_new_window) {
                 window = new Window.with_working_directory (this, working_directory);
             } else {
-                print ("Fermion already started");
+                window.new_tab (working_directory);
             }
             window.present ();
         }
@@ -174,7 +197,7 @@ namespace Fermion {
         }
 
         private void on_preferences_action () {
-            new Fermion.Preferences (window);
+            new Fermion.Preferences (this.active_window);
         }
     }
 }
