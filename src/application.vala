@@ -23,9 +23,8 @@ namespace Fermion {
         private List<Fermion.Window> windows = new List<Fermion.Window> ();
 
         public static string? working_directory = null;
-        [CCode (array_length = false, array_null_terminated = true)]
-        private static string[]? command_e = null;
-        private static string? command_x = null;
+        private static string[]? command_execute = null;
+        private static string? command_multiline = null;
 
         private static bool option_help = false;
         private static bool option_version = false;
@@ -40,12 +39,12 @@ namespace Fermion {
         private const OptionEntry[] ENTRIES = {
             { "version", 'v', 0, OptionArg.NONE, ref option_version, N_("Show version"), null },
             /* -e flag is used for running single string commands. May be more than one -e flag in cmdline */
-            { "execute", 'e', 0, OptionArg.STRING_ARRAY, ref command_e, N_("Run a program in terminal"), "COMMAND" },
+            { "execute", 'e', 0, OptionArg.STRING_ARRAY, ref command_execute, N_("Run a program in terminal"), "COMMAND" },
             /* -x flag is removed before OptionContext parser applied but is included here so that it appears in response
              *  to  the --help flag */
-            { "commandline", 'x', 0, OptionArg.STRING, ref command_x,
+            { "commandline", 'x', 0, OptionArg.STRING, ref command_multiline,
               N_("Run remainder of line as a command in terminal. Can also use '--' as flag"), "COMMAND_LINE" },
-            { "newwindow", 'n', 0, OptionArg.NONE, ref option_new_window,
+            { "new-window", 'n', 0, OptionArg.NONE, ref option_new_window,
               N_("Open a new terminal window"), null },
             { "help", 'h', 0, OptionArg.NONE, ref option_help, N_("Show help"), null },
             { "working-directory", 'w', 0, OptionArg.FILENAME, ref working_directory,
@@ -55,14 +54,13 @@ namespace Fermion {
         };
 
         public Application () {
-            Object ();
-            resource_base_path = "/co/tauos/Fermion";
-        }
+            Object (
+                flags: ApplicationFlags.HANDLES_COMMAND_LINE,
+                application_id: Config.APP_ID,
+                resource_base_path: "/co/tauos/Fermion"
+            );
 
-        construct {
             settings = new GLib.Settings (Config.APP_SETTINGS);
-            application_id = Config.APP_ID;
-            flags |= ApplicationFlags.HANDLES_COMMAND_LINE;
             Intl.setlocale (LocaleCategory.ALL, "");
             Intl.textdomain (Config.GETTEXT_PACKAGE);
             Intl.bindtextdomain (Config.GETTEXT_PACKAGE, Config.LOCALEDIR);
@@ -72,6 +70,9 @@ namespace Fermion {
             set_accels_for_action ("app.quit", {"<primary>q"});
         }
 
+        /*
+         * GObject Overrides
+         */
         public override void window_added (Gtk.Window window) {
             windows.append (window as Fermion.Window);
             base.window_added (window);
@@ -82,20 +83,20 @@ namespace Fermion {
             base.window_added (window);
         }
 
+        public override int command_line (ApplicationCommandLine command_line) {
+            hold ();
+            int res = handle_command_line (command_line);
+            release ();
+            return res;
+        }
+
         private Fermion.Window? get_last_window () {
             uint length = windows.length ();
 
             return length > 0 ? windows.nth_data (length - 1) : null;
         }
 
-        public override int command_line (ApplicationCommandLine command_line) {
-            hold ();
-            int res = _command_line (command_line);
-            release ();
-            return res;
-        }
-
-        private int _command_line (ApplicationCommandLine command_line) {
+        private int handle_command_line (ApplicationCommandLine command_line) {
             var context = new OptionContext (null);
             context.add_main_entries (ENTRIES, "fermion");
             context.set_help_enabled (false);
@@ -138,17 +139,13 @@ namespace Fermion {
             if (option_help) {
                 command_line.print (context.get_help (true, null));
             } else if (option_version) {
-                command_line.print ("%s %s", "Fermion" + Config.NAME_SUFFIX, Config.VERSION + "\n\n");
+                command_line.print ("%s %s", "Fermion" + Config.NAME_SUFFIX, Config.VERSION);
             } else {
-                if (command_e != null) {
+                if (command_execute != null) {
                     // TODO this would generate multiple command tabs lol
                     print ("This command is not yet programmed lol");
                 } else if (commandline.length > 0) {
                     run_command_line (commandline, working_directory);
-                } else if (command_x != null) {
-                    const string WARNING = "Usage: --commandline=[COMMANDLINE] without spaces around '='\r\n\r\n";
-                    start_terminal_with_working_directory (working_directory);
-                    get_last_window ().current_terminal.feed (WARNING.data);
                 } else {
                     start_terminal_with_working_directory (working_directory);
                 }
@@ -161,7 +158,6 @@ namespace Fermion {
             Fermion.Window? window = get_last_window ();
 
             if (window == null || option_new_window) {
-                print ("yay");
                 window = new Window (this, command_line, working_directory);
             } else {
                 window.new_tab (working_directory, command_line);
@@ -181,19 +177,20 @@ namespace Fermion {
         }
 
         private void on_about_action () {
-            string[] authors = { "Jamie Murphy" };
-            string[] artists = { "Jamie Murphy", "Lains https://github.com/lainsce" };
-            Gtk.show_about_dialog (this.active_window,
-                                   "program-name", "Fermion" + Config.NAME_SUFFIX,
-                                   "authors", authors,
-                                   "artists", artists,
-                                   "comments", "Use the command line",
-                                   "copyright", "Made with <3 by Fyra Labs",
-                                   "logo-icon-name", Config.APP_ID,
-                                   "website", "https://tauos.co",
-                                   "website-label", "tauOS Website",
-                                   "license-type", Gtk.License.GPL_3_0,
-                                   "version", Config.VERSION);
+            string[] developers = { "Jamie Murphy" };
+            new He.AboutWindow (this.active_window,
+                                @"Fermion$(Config.NAME_SUFFIX)",
+                                Config.APP_ID,
+                                Config.VERSION,
+                                Config.APP_ID, // Version
+                                null,
+                                "https://github.com/tau-OS/fermion/issues",
+                                "https://github.com/tau-OS/fermion",
+                                {},
+                                developers,
+                                2022,
+                                He.AboutWindow.Licenses.GPLv3,
+                                He.Colors.DARK).present ();
         }
 
         private void on_preferences_action () {

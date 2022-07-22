@@ -17,7 +17,6 @@ deps = [
     dependency('gtk4'),
     dependency('libhelium-1'),
     dependency('gee-0.8'),
-    # TODO add this as a subproject or smth, or make a vte-gtk4 package for tau. idk
     dependency('vte-2.91-gtk4', version: '>= 0.70'),
     dependency('libpcre2-8'),
     meson.get_compiler('vala').find_library('posix')

@@ -8,7 +8,7 @@ project(
 
 application_id = 'co.tauos.Fermion'
 
-if get_option('development')
+if get_option('profile') == 'development'
   app_id = 'co.tauos.Fermion.Devel'
   name_suffix = ' (Development)'
 else

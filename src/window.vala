@@ -233,6 +233,7 @@ namespace Fermion {
         private void action_select_all () {
             action_select_all_handler (switcher.current.page as TerminalWidget);
         }
+
         private void action_duplicate_tab () {
             new_tab (current_terminal.get_shell_location ());
         }
