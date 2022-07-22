@@ -32,17 +32,24 @@ namespace Fermion {
         public GLib.List <TerminalWidget> terminals = new GLib.List <TerminalWidget> ();
 
         // Keyboard Actions
+        // TODO, make this it's own file?
         public const string ACTION_COPY = "action-copy";
         public const string ACTION_PASTE = "action-paste";
         public const string ACTION_SELECT_ALL = "action-select-all";
+        public const string ACTION_NEW_TAB = "action-new-tab";
         public const string ACTION_DUPLICATE_TAB = "action-duplicate-tab";
+        public const string ACTION_RELOAD_TAB = "action-reload-tab";
+        public const string ACTION_CLOSE_TAB = "action-close-tab";
         private static Gee.MultiMap<string, string> action_accelerators = new Gee.HashMultiMap<string, string> ();
 
         private const ActionEntry[] ENTRIES = {
             { ACTION_COPY, action_copy },
             { ACTION_PASTE, action_paste },
             { ACTION_SELECT_ALL, action_select_all },
+            { ACTION_NEW_TAB, action_new_tab },
             { ACTION_DUPLICATE_TAB, action_duplicate_tab },
+            { ACTION_RELOAD_TAB, action_reload_tab },
+            { ACTION_CLOSE_TAB, action_close_tab },
         };
 
         private TerminalWidget get_term_widget (He.Tab tab) {
@@ -69,7 +76,11 @@ namespace Fermion {
             action_accelerators[ACTION_COPY] = "<Control><Shift>c";
             action_accelerators[ACTION_PASTE] = "<Ctrl><Shft>V";
             action_accelerators[ACTION_SELECT_ALL] = "<Control><Shift>a";
+            action_accelerators[ACTION_NEW_TAB] = "<Control><Shift>t";
             action_accelerators[ACTION_DUPLICATE_TAB] = "<Control><Shift>d";
+            action_accelerators[ACTION_RELOAD_TAB] = "<Shift>F5";
+            action_accelerators[ACTION_RELOAD_TAB] = "<Control><Shift>r";
+            action_accelerators[ACTION_CLOSE_TAB] = "<Control><Shift>w";
         }
 
         construct {
@@ -234,8 +245,19 @@ namespace Fermion {
             action_select_all_handler (switcher.current.page as TerminalWidget);
         }
 
+        private void action_new_tab () {
+            new_tab (Environment.get_home_dir ());
+        }
         private void action_duplicate_tab () {
             new_tab (current_terminal.get_shell_location ());
+        }
+        private void action_reload_tab () {
+            current_terminal.reload ();
+        }
+        private void action_close_tab () {
+            // shit i forgor to write this
+            //current_terminal.tab.close ();
+            current_terminal.grab_focus ();
         }
     }
 }

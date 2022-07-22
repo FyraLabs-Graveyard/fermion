@@ -51,6 +51,11 @@ namespace Fermion {
             "(?:news:|man:|info:)[[:alnum:]\\Q^_{|}~!\"#$%&'()*+,./;:=?`\\E]+"
         };
 
+        public bool child_has_exited {
+            get;
+            private set;
+        }
+
         public He.Tab tab;
         private string _tab_label;
         public string tab_label {
@@ -66,6 +71,24 @@ namespace Fermion {
             }
         }
 
+        public bool try_get_foreground_pid (out int pid) {
+            if (child_has_exited) {
+                pid = -1;
+                return false;
+            }
+
+            int pty = get_pty ().fd;
+            int fgpid = Posix.tcgetpgrp (pty);
+
+            if (fgpid != this.child_pid && fgpid != -1) {
+                pid = (int) fgpid;
+                return true;
+            } else {
+                pid = -1;
+                return false;
+            }
+        }
+
         public TerminalWidget () {
             this.set_hexpand (true);
             this.set_vexpand (true);
@@ -74,6 +97,11 @@ namespace Fermion {
 
             restore_settings ();
             Application.settings.changed.connect (restore_settings);
+            child_has_exited = false;
+
+            child_exited.connect (() => {
+                child_has_exited = true;
+            });
         }
 
         public void restore_settings () {
@@ -144,6 +172,17 @@ namespace Fermion {
             } catch (GLib.FileError error) {
                 return "";
             }
+        }
+
+        public void reload () {
+            if (try_get_foreground_pid (null)) {
+                debug ("Foreground dialog needed");
+            }
+
+            var old_loc = get_shell_location ();
+            Posix.kill (this.child_pid, Posix.Signal.TERM);
+            reset (true, true);
+            set_active_shell (old_loc);
         }
 
         private void clickable (string[] str) {
