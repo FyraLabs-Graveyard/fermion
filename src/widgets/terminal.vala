@@ -194,6 +194,10 @@ namespace Fermion {
             }
         }
 
+        public void get_link_uri (double x, double y) {
+            link_uri = Fermion.Utils.get_pattern_at_coords (this, x, y);
+        }
+
         private void reload_internal () {
             var old_loc = get_shell_location ();
             Posix.kill (this.child_pid, Posix.Signal.TERM);
@@ -220,10 +224,10 @@ namespace Fermion {
             this.add_controller (leftclick);
 
             leftclick.pressed.connect ((n_presses, x, y) => {
-               link_uri = Fermion.Utils.get_pattern_at_coords (this, x, y);
-                if (link_uri != null && !this.get_has_selection ()) {
-                    action_browser_handler (this);
-                }
+               get_link_uri (x, y);
+               if (link_uri != null && !this.get_has_selection ()) {
+                   action_browser_handler (this);
+               }
             });
         }
     }

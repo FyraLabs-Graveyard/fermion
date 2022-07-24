@@ -105,9 +105,7 @@ namespace Fermion {
             clipboard = this.get_clipboard ();
 
             var ms1 = new Menu ();
-            // TODO, make sure there is actually something to click
-            // and change the label
-            ms1.append ("Open in Browser", "win.action-open-in-browser");
+            ms1.append ("Show in Browser", "win.action-open-in-browser");
             var s1 = new MenuItem.section (null, ms1);
             var ms2 = new Menu ();
             ms2.append ("Copy", "win.action-copy");
@@ -119,6 +117,18 @@ namespace Fermion {
             menu.append_section (null, ms2);
 
             popover.set_menu_model (menu);
+        }
+
+        // TODO, make it so we can't open our own app LOL
+        private void update_browser_label (string? uri) {
+            AppInfo? info = Fermion.Utils.get_default_app_for_uri (uri);
+
+            menu.remove (0);
+
+            var ms1 = new Menu ();
+            var app = info != null ? info.get_display_name () : "Default application";
+            ms1.append (@"Show in $(app)", "win.action-open-in-browser");
+            menu.insert_section (0, null, ms1);
         }
 
         [GtkCallback]
@@ -172,6 +182,11 @@ namespace Fermion {
             popover.set_parent (terminal);
 
             rightclick.pressed.connect ((n_press, x, y) => {
+                terminal.get_link_uri (x, y);
+                Fermion.Utils.get_current_selection_link_or_pwd (terminal, (uri) => {
+                    update_browser_label (Fermion.Utils.sanitize_path (uri, current_terminal.get_shell_location ()));
+                });
+
                 Gdk.Rectangle rect = {(int)x,
                                       (int)y,
                                       0,

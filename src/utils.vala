@@ -1,6 +1,42 @@
 namespace Fermion.Utils {
     public delegate void SelectionCallback (string uri);
 
+    public AppInfo? get_default_app_for_uri (string? uri) {
+        if (uri == null)
+            return null;
+
+        AppInfo? info = null;
+        var scheme = Uri.parse_scheme (uri);
+        if (scheme != null)
+            info = AppInfo.get_default_for_uri_scheme (scheme);
+
+        // unlucky tbh
+        if (info == null) {
+            bool uncertain;
+
+            var type = ContentType.guess (uri, null, out uncertain);
+            if (!uncertain)
+                info = AppInfo.get_default_for_type (type, true);
+
+            if (info == null) {
+                var file = File.new_for_uri (uri);
+
+                try {
+                    var finfo = file.query_info (FileAttribute.STANDARD_CONTENT_TYPE,
+                                                 FileQueryInfoFlags.NOFOLLOW_SYMLINKS, null);
+
+                    if (finfo.has_attribute (FileAttribute.STANDARD_CONTENT_TYPE)) {
+                        info = AppInfo.get_default_for_type (finfo.get_attribute_string (FileAttribute.STANDARD_CONTENT_TYPE), true);
+                    }
+                } catch (Error e) {
+                    warning ("Could not get file info %s", e.message);
+                }
+            }
+        }
+
+        return info;
+    }
+
     public void get_current_selection_link_or_pwd (Fermion.TerminalWidget term, SelectionCallback cb) {
         var link_uri = term.link_uri;
         if (link_uri == null) {
