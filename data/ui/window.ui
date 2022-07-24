@@ -28,6 +28,8 @@
                 </child>
                 <child>
                     <object class="HeTabSwitcher" id="switcher">
+                        <property name="vexpand">true</property>
+                        <property name="hexpand">true</property>
                         <signal name="tab-added" handler="on_tab_added" swapped="no" />
                         <signal name="tab-removed" handler="on_tab_removed" swapped="no" />
                         <signal name="tab-switched" handler="on_tab_switched" swapped="no" />
