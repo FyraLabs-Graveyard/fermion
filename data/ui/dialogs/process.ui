@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+    <requires lib="gtk" version="4.0" />
+    <template class="FermionProcessWarningDialog" parent="HeDialog">
+        <property name="default-width">600</property>
+        <property name="default-height">500</property>
+        <property name="icon">dialog-warning</property>
+        <property name="modal">true</property>
+        <property name="primary-button">
+            <object class="HeFillButton" id="btn">
+                <property name="label">Close Anyway</property>
+                <property name="color">red</property>
+                <signal handler="do_close" name="clicked" />
+            </object>
+        </property>
+    </template>
+</interface>

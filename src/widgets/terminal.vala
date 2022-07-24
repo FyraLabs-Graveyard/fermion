@@ -176,9 +176,22 @@ namespace Fermion {
 
         public void reload () {
             if (try_get_foreground_pid (null)) {
-                debug ("Foreground dialog needed");
-            }
+                var dialog = new ProcessWarningDialog (
+                    (Window) ((Gtk.Application) GLib.Application.get_default ()).active_window,
+                    ProcessWarnType.TAB_RELOAD
+                );
 
+                dialog.returned.connect (() => {
+                    dialog.destroy ();
+
+                    reload_internal ();
+                });
+            } else {
+                reload_internal ();
+            }
+        }
+
+        private void reload_internal () {
             var old_loc = get_shell_location ();
             Posix.kill (this.child_pid, Posix.Signal.TERM);
             reset (true, true);
