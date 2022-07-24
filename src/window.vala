@@ -40,6 +40,9 @@ namespace Fermion {
         public const string ACTION_DUPLICATE_TAB = "action-duplicate-tab";
         public const string ACTION_RELOAD_TAB = "action-reload-tab";
         public const string ACTION_CLOSE_TAB = "action-close-tab";
+
+        // Other Events
+        public const string ACTION_OPEN_IN_BROWSER = "action-open-in-browser";
         private static Gee.MultiMap<string, string> action_accelerators = new Gee.HashMultiMap<string, string> ();
 
         private const ActionEntry[] ENTRIES = {
@@ -50,6 +53,8 @@ namespace Fermion {
             { ACTION_DUPLICATE_TAB, action_duplicate_tab },
             { ACTION_RELOAD_TAB, action_reload_tab },
             { ACTION_CLOSE_TAB, action_close_tab },
+
+            { ACTION_OPEN_IN_BROWSER, action_open_in_browser},
         };
 
         private TerminalWidget get_term_widget (He.Tab tab) {
@@ -258,6 +263,10 @@ namespace Fermion {
             // shit i forgor to write this
             //current_terminal.tab.close ();
             current_terminal.grab_focus ();
+        }
+
+        private void action_open_in_browser () {
+            action_browser_handler (switcher.current.page as TerminalWidget);
         }
     }
 }

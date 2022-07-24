@@ -71,6 +71,8 @@ namespace Fermion {
             }
         }
 
+        public string link_uri;
+
         public bool try_get_foreground_pid (out int pid) {
             if (child_has_exited) {
                 pid = -1;
@@ -94,6 +96,7 @@ namespace Fermion {
             this.set_vexpand (true);
 
             this.clickable (REGEX_STRINGS);
+            this.handle_events ();
 
             restore_settings ();
             Application.settings.changed.connect (restore_settings);
@@ -208,6 +211,20 @@ namespace Fermion {
                     warning (error.message);
                 }
             }
+        }
+
+        private void handle_events () {
+            Gtk.GestureClick leftclick = new Gtk.GestureClick () {
+                button = Gdk.BUTTON_PRIMARY
+            };
+            this.add_controller (leftclick);
+
+            leftclick.pressed.connect ((n_presses, x, y) => {
+               link_uri = Fermion.Utils.get_pattern_at_coords (this, x, y);
+                if (link_uri != null && !this.get_has_selection ()) {
+                    action_browser_handler (this);
+                }
+            });
         }
     }
 }

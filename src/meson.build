@@ -2,8 +2,10 @@ sources = [
    'application.vala',
    'window.vala',
    'preferences.vala',
+   'utils.vala',
    'widgets/terminal.vala',
    'handlers/keyboard.vala',
+   'handlers/mouse.vala',
    'dialogs/unsafe_paste.vala',
    'dialogs/process.vala'
 ]
