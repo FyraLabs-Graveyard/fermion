@@ -1,6 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
     <requires lib="gtk" version="4.0" />
+    <menu id="primary_menu">
+        <section>
+            <item>
+                <attribute name="label" translatable="yes">Icon size</attribute>
+                <attribute name="display-hint">inline-buttons</attribute>
+                <attribute name="custom">zoom-grid</attribute>
+            </item>
+            <item>
+                <attribute name="label" translatable="yes">_Preferences</attribute>
+                <attribute name="action">app.preferences</attribute>
+            </item>
+            <item>
+                <attribute name="label" translatable="yes">_Keyboard Shortcuts</attribute>
+                <attribute name="action">win.show-help-overlay</attribute>
+            </item>
+            <item>
+                <attribute name="label" translatable="yes">_About Fermion</attribute>
+                <attribute name="action">app.about</attribute>
+            </item>
+        </section>
+    </menu>
     <template class="FermionWindow" parent="HeApplicationWindow">
         <property name="title" translatable="yes">Fermion</property>
         <child>
@@ -14,7 +35,43 @@
                         <child>
                             <object class="GtkMenuButton">
                                 <property name="icon-name">open-menu-symbolic</property>
-                                <property name="menu-model">primary_menu</property>
+                                <property name="popover">
+                                    <object class="GtkPopoverMenu">
+                                        <property name="menu-model">primary_menu</property>
+                                        <child type="zoom-grid">
+                                            <object class="GtkGrid">
+                                                <property name="hexpand">true</property>
+                                                <property name="column-homogeneous">true</property>
+                                                <property name="margin-bottom">6</property>
+                                                <property name="margin-start">10</property>
+                                                <property name="margin-end">10</property>
+                                                <style>
+                                                    <class name="linked" />
+                                                </style>
+                                                <child>
+                                                    <object class="GtkButton">
+                                                        <property name="action-name">win.action-zoom-out</property>
+                                                        <property name="icon-name">zoom-out-symbolic</property>
+                                                        <property name="tooltip-text">Zoom Out</property>
+                                                    </object>
+                                                </child>
+                                                <child>
+                                                    <object class="GtkButton">
+                                                        <property name="action-name">win.action-zoom-default</property>
+                                                        <property name="label">100%</property>
+                                                    </object>
+                                                </child>
+                                                <child>
+                                                    <object class="GtkButton">
+                                                        <property name="action-name">win.action-zoom-in</property>
+                                                        <property name="icon-name">zoom-in-symbolic</property>
+                                                        <property name="tooltip-text">Zoom In</property>
+                                                    </object>
+                                                </child>
+                                            </object>
+                                        </child>
+                                    </object>
+                                </property>
                             </object>
                         </child>
                         <child>
@@ -40,21 +97,4 @@
             </object>
         </child>
     </template>
-
-    <menu id="primary_menu">
-        <section>
-            <item>
-                <attribute name="label" translatable="yes">_Preferences</attribute>
-                <attribute name="action">app.preferences</attribute>
-            </item>
-            <item>
-                <attribute name="label" translatable="yes">_Keyboard Shortcuts</attribute>
-                <attribute name="action">win.show-help-overlay</attribute>
-            </item>
-            <item>
-                <attribute name="label" translatable="yes">_About Fermion</attribute>
-                <attribute name="action">app.about</attribute>
-            </item>
-        </section>
-    </menu>
 </interface>

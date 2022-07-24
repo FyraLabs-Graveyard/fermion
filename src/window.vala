@@ -43,6 +43,9 @@ namespace Fermion {
         // Other Events
         public const string ACTION_OPEN_IN_BROWSER = "action-open-in-browser";
         public const string ACTION_FULLSCREEN = "action-fullscreen";
+        public const string ACTION_ZOOM_DEFAULT = "action-zoom-default";
+        public const string ACTION_ZOOM_IN = "action-zoom-in";
+        public const string ACTION_ZOOM_OUT = "action-zoom-out";
         private static Gee.MultiMap<string, string> action_accelerators = new Gee.HashMultiMap<string, string> ();
 
         private const ActionEntry[] ENTRIES = {
@@ -55,7 +58,10 @@ namespace Fermion {
             { ACTION_CLOSE_TAB, action_close_tab },
 
             { ACTION_OPEN_IN_BROWSER, action_open_in_browser},
-            { ACTION_FULLSCREEN, action_fullscreen }
+            { ACTION_FULLSCREEN, action_fullscreen },
+            { ACTION_ZOOM_DEFAULT, action_zoom_default },
+            { ACTION_ZOOM_IN, action_zoom_in },
+            { ACTION_ZOOM_OUT, action_zoom_out },
         };
 
         private TerminalWidget get_term_widget (He.Tab tab) {
@@ -80,7 +86,7 @@ namespace Fermion {
         static construct {
             // this is broken and idk why
             action_accelerators[ACTION_COPY] = "<Control><Shift>c";
-            action_accelerators[ACTION_PASTE] = "<Ctrl><Shft>V";
+            action_accelerators[ACTION_PASTE] = "<Control><Shift>V";
             action_accelerators[ACTION_SELECT_ALL] = "<Control><Shift>a";
             action_accelerators[ACTION_NEW_TAB] = "<Control><Shift>t";
             action_accelerators[ACTION_DUPLICATE_TAB] = "<Control><Shift>d";
@@ -89,6 +95,11 @@ namespace Fermion {
             action_accelerators[ACTION_CLOSE_TAB] = "<Control><Shift>w";
 
             action_accelerators[ACTION_FULLSCREEN] = "F11";
+            action_accelerators[ACTION_ZOOM_DEFAULT] = "<Control>0";
+            action_accelerators[ACTION_ZOOM_DEFAULT] = "<Control>KP_0";
+            action_accelerators[ACTION_ZOOM_IN] = "<Control>plus";
+            action_accelerators[ACTION_ZOOM_IN] = "<Control>equal";
+            action_accelerators[ACTION_ZOOM_OUT] = "<Control>minus";
         }
 
         construct {
@@ -308,6 +319,21 @@ namespace Fermion {
             } else {
                 fullscreen ();
             }
+        }
+
+        private void action_zoom_default () {
+            current_terminal.set_font_scale (1.0);
+        }
+
+        private const double MIN_SCALE = 0.25;
+        private const double MAX_SCALE = 4.0;
+        private void action_zoom_in () {
+            var scale = (current_terminal.font_scale + 0.1).clamp (MIN_SCALE, MAX_SCALE);
+            current_terminal.set_font_scale (scale);
+        }
+        private void action_zoom_out () {
+            var scale = (current_terminal.font_scale - 0.1).clamp (MIN_SCALE, MAX_SCALE);
+            current_terminal.set_font_scale (scale);
         }
     }
 }
