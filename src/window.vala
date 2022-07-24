@@ -32,7 +32,6 @@ namespace Fermion {
         public GLib.List <TerminalWidget> terminals = new GLib.List <TerminalWidget> ();
 
         // Keyboard Actions
-        // TODO, make this it's own file?
         public const string ACTION_COPY = "action-copy";
         public const string ACTION_PASTE = "action-paste";
         public const string ACTION_SELECT_ALL = "action-select-all";
@@ -43,6 +42,7 @@ namespace Fermion {
 
         // Other Events
         public const string ACTION_OPEN_IN_BROWSER = "action-open-in-browser";
+        public const string ACTION_FULLSCREEN = "action-fullscreen";
         private static Gee.MultiMap<string, string> action_accelerators = new Gee.HashMultiMap<string, string> ();
 
         private const ActionEntry[] ENTRIES = {
@@ -55,6 +55,7 @@ namespace Fermion {
             { ACTION_CLOSE_TAB, action_close_tab },
 
             { ACTION_OPEN_IN_BROWSER, action_open_in_browser},
+            { ACTION_FULLSCREEN, action_fullscreen }
         };
 
         private TerminalWidget get_term_widget (He.Tab tab) {
@@ -86,6 +87,8 @@ namespace Fermion {
             action_accelerators[ACTION_RELOAD_TAB] = "<Shift>F5";
             action_accelerators[ACTION_RELOAD_TAB] = "<Control><Shift>r";
             action_accelerators[ACTION_CLOSE_TAB] = "<Control><Shift>w";
+
+            action_accelerators[ACTION_FULLSCREEN] = "F11";
         }
 
         construct {
@@ -268,9 +271,11 @@ namespace Fermion {
         private void action_copy () {
             action_copy_handler (switcher.current.page as TerminalWidget);
         }
+
         private void action_paste () {
             action_paste_handler (switcher.current.page as TerminalWidget);
         }
+
         private void action_select_all () {
             action_select_all_handler (switcher.current.page as TerminalWidget);
         }
@@ -278,12 +283,15 @@ namespace Fermion {
         private void action_new_tab () {
             new_tab (Environment.get_home_dir ());
         }
+
         private void action_duplicate_tab () {
             new_tab (current_terminal.get_shell_location ());
         }
+
         private void action_reload_tab () {
             current_terminal.reload ();
         }
+
         private void action_close_tab () {
             // shit i forgor to write this
             //current_terminal.tab.close ();
@@ -292,6 +300,14 @@ namespace Fermion {
 
         private void action_open_in_browser () {
             action_browser_handler (switcher.current.page as TerminalWidget);
+        }
+
+        private void action_fullscreen () {
+            if (fullscreened) {
+                unfullscreen ();
+            } else {
+                fullscreen ();
+            }
         }
     }
 }
