@@ -104,9 +104,19 @@ namespace Fermion {
 
             clipboard = this.get_clipboard ();
 
-            menu.append ("Copy", "win.action-copy");
-            menu.append ("Paste", "win.action-paste");
-            menu.append ("Select All", "win.action-select-all");
+            var ms1 = new Menu ();
+            // TODO, make sure there is actually something to click
+            // and change the label
+            ms1.append ("Open in Browser", "win.action-open-in-browser");
+            var s1 = new MenuItem.section (null, ms1);
+            var ms2 = new Menu ();
+            ms2.append ("Copy", "win.action-copy");
+            ms2.append ("Paste", "win.action-paste");
+            ms2.append ("Select All", "win.action-select-all");
+            var s2 = new MenuItem.section (null, ms1);
+
+            menu.append_section (null, ms1);
+            menu.append_section (null, ms2);
 
             popover.set_menu_model (menu);
         }

@@ -18,7 +18,7 @@
 
 namespace Fermion {
     public void action_browser_handler (TerminalWidget terminal) {
-        Fermion.Utils.get_current_selection_link_or_pwd (terminal, terminal.link_uri, (uri) => {
+        Fermion.Utils.get_current_selection_link_or_pwd (terminal, (uri) => {
             var to_open = Fermion.Utils.sanitize_path (uri, terminal.get_shell_location ());
 
             if (to_open != null) {

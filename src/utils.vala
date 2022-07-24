@@ -1,7 +1,8 @@
 namespace Fermion.Utils {
     public delegate void SelectionCallback (string uri);
 
-    public void get_current_selection_link_or_pwd (Fermion.TerminalWidget term, string link_uri, SelectionCallback cb) {
+    public void get_current_selection_link_or_pwd (Fermion.TerminalWidget term, SelectionCallback cb) {
+        var link_uri = term.link_uri;
         if (link_uri == null) {
             if (term.get_has_selection ()) {
                 cb (term.get_text_selected ());
