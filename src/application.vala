@@ -31,6 +31,7 @@ namespace Fermion {
         private static bool option_new_window = false;
 
         private const GLib.ActionEntry app_entries[] = {
+            { "new-window", on_new_window },
             { "about", on_about_action },
             { "preferences", on_preferences_action },
             { "quit", quit }
@@ -68,6 +69,12 @@ namespace Fermion {
             
             add_action_entries (app_entries, this);
             set_accels_for_action ("app.quit", {"<primary>q"});
+            set_accels_for_action ("app.new-window", {"<Control><Shift>n"});
+        }
+
+        public void new_window () {
+            var win = new Window (this, null, null);
+            win.present ();
         }
 
         /*
@@ -195,6 +202,10 @@ namespace Fermion {
 
         private void on_preferences_action () {
             new Fermion.Preferences (this.active_window);
+        }
+
+        private void on_new_window () {
+            new_window ();
         }
     }
 }

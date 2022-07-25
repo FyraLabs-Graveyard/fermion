@@ -27,6 +27,7 @@ namespace Fermion {
         public Menu menu = new GLib.Menu ();
 
         private Gtk.PopoverMenu popover { get; set; }
+        private bool should_close = false;
 
         public TerminalWidget current_terminal { get; private set; default = null; }
         public GLib.List <TerminalWidget> terminals = new GLib.List <TerminalWidget> ();
@@ -81,6 +82,10 @@ namespace Fermion {
             Object (app: app);
 
             new_tab (location);
+        }
+
+        public Window.blank (Fermion.Application app) {
+            Object (app: app);
         }
 
         static construct {
@@ -162,6 +167,17 @@ namespace Fermion {
         }
 
         [GtkCallback]
+        private void on_tab_moved (He.Tab tab) {
+            var widget = get_term_widget (tab);
+            var win = new Window.blank (app);
+            
+            switcher.remove_tab (tab);
+            win.switcher.insert_tab (tab, -1);
+            win.current_terminal = widget;
+            win.present ();
+        }
+
+        [GtkCallback]
         private void on_tab_duplicated (He.Tab tab) {
             var widget = get_term_widget (tab);
             new_tab (widget.get_shell_location ());
@@ -183,6 +199,41 @@ namespace Fermion {
                 popover.set_parent (new_tab.page as TerminalWidget);
                 return false;
             });
+        }
+
+        [GtkCallback]
+        private bool on_close_tab_requested (He.Tab tab) {
+            var widget = get_term_widget (tab);
+
+            if (should_close) {
+                //widget.kill_fg ();
+
+                current_terminal.grab_focus ();
+                
+                should_close = false;
+
+                return true;
+            }
+
+            if (widget.try_get_foreground_pid (null)) {
+                var dialog = new ProcessWarningDialog (
+                    this,
+                    ProcessWarnType.TAB_CLOSE
+                );
+                dialog.present ();
+
+                dialog.returned.connect (() => {
+                    should_close = true;
+                    
+                    tab.actions.activate_action ("action-close", null);
+
+                    dialog.destroy ();
+                });
+
+                return false;
+            }
+
+            return true;
         }
 
         private void handle_events (TerminalWidget terminal) {
