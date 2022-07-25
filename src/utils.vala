@@ -41,7 +41,7 @@ namespace Fermion.Utils {
         var link_uri = term.link_uri;
         if (link_uri == null) {
             if (term.get_has_selection ()) {
-                cb (term.get_text_selected ());
+                cb (term.get_text_selected (Vte.Format.TEXT));
             } else {
                 cb (term.get_shell_location ());
             }
@@ -147,18 +147,15 @@ namespace Fermion.Utils {
     }
 
 
-    // Adapted from GNOME Builder, will be removed once VTE is better
     public string get_pattern_at_coords (Fermion.TerminalWidget term,
-                                       double x,
-                                       double y) {
-        var tag = 0;
-
+                                         double x,
+                                         double y) {
         var cell_width = term.get_char_width ();
         var cell_height = term.get_char_height ();
 
         var column = x / cell_width;
         var row = y / cell_height;
 
-        return term.match_check ((long) column, (long) row, out tag);
+        return term.check_match_at ((long) column, (long) row, null);
     }
 }

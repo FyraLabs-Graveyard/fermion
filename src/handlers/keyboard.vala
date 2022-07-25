@@ -23,7 +23,7 @@ namespace Fermion {
     
     private void action_copy_handler (TerminalWidget terminal) {
         var clipboard = ((Window) ((Gtk.Application) GLib.Application.get_default ()).active_window).clipboard;
-        clipboard.set_text (terminal.get_text_selected ());
+        clipboard.set_text (terminal.get_text_selected (Vte.Format.TEXT));
     }
 
     private void action_paste_handler (TerminalWidget terminal) {
