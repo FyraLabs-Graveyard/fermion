@@ -21,7 +21,7 @@ namespace Fermion {
         GLib.Pid pid;
         private He.Desktop desktop;
 
-        internal const string DEFAULT_LABEL = "Terminal";
+        internal const string DEFAULT_LABEL = "Fermion";
         public string current_working_directory { get; private set; default = "";}
 
         static string[] fenvv = {
@@ -58,9 +58,15 @@ namespace Fermion {
             "(?:news:|man:|info:)[[:alnum:]\\Q^_{|}~!\"#$%&'()*+,./;:=?`\\E]+"
         };
 
-        public bool child_has_exited {
-            get;
-            private set;
+        /**
+        * This signal is emitted when the terminal process exits. Something should
+        * listen for this signal and close the tab that contains this terminal.
+        */
+        public signal void exit ();
+
+        private void on_child_exited () {
+            this.pid = -1;
+            this.exit ();
         }
 
         public He.Tab tab;
@@ -81,11 +87,6 @@ namespace Fermion {
         public string link_uri;
 
         public bool try_get_foreground_pid (out int pid) {
-            if (child_has_exited) {
-                pid = -1;
-                return false;
-            }
-
             int pty = get_pty ().fd;
             int fgpid = Posix.tcgetpgrp (pty);
 
@@ -111,11 +112,7 @@ namespace Fermion {
                 restore_settings (desktop);
             });
 
-            child_has_exited = false;
-
-            child_exited.connect (() => {
-                child_has_exited = true;
-            });
+            this.child_exited.connect (this.on_child_exited);
         }
 
         public void restore_settings (He.Desktop desktop) {
@@ -194,11 +191,24 @@ namespace Fermion {
         }
 
         public void end_process () {
-            while (Posix.kill (this.pid, 0) == 0) {
-                Posix.kill (this.pid, Posix.Signal.HUP);
-                Posix.kill (this.pid, Posix.Signal.TERM);
-                Thread.usleep (100);
-            }
+            Posix.kill (this.pid, Posix.Signal.HUP);
+            Posix.kill (this.pid, Posix.Signal.TERM);
+
+            int pid_fd = -1;
+
+            Posix.pollfd pid_pfd[1];
+            pid_pfd[0] = Posix.pollfd () {
+                fd = pid_fd,
+                events = Posix.POLLIN
+            };
+            while (Posix.poll (pid_pfd, -1) != 1) {}
+
+            Posix.close (pid);
+        }
+        public void kill_fg () {
+            int fg_pid;
+            if (this.try_get_foreground_pid (out fg_pid))
+                Posix.kill (fg_pid, Posix.Signal.KILL);
         }
 
         public void set_active_shell (string? dir = GLib.Environment.get_current_dir ()) {

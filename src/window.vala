@@ -124,7 +124,6 @@ namespace Fermion {
             clipboard = this.get_clipboard ();
 
             var ms1 = new Menu ();
-            ms1.append ("Show in Browser", "win.action-open-in-browser");
             var s1 = new MenuItem.section (null, ms1);
             var ms2 = new Menu ();
             ms2.append ("Copy", "win.action-copy");
@@ -136,27 +135,29 @@ namespace Fermion {
             menu.append_section (null, ms2);
 
             popover.set_menu_model (menu);
-
-            this.switcher.notify["n-tabs"].connect (() => {
-                foreach (unowned TerminalWidget terminal in terminals) {
-                    terminal.end_process ();
-                }
-                if (switcher.n_tabs < 1) {
-                    this.close ();
-                }
-            });
         }
 
-        // TODO, make it so we can't open our own app LOL
+        protected override bool close_request () {
+            debug ("Exiting window... Disposing of stuff...");
+            foreach (unowned TerminalWidget terminal in terminals) {
+                terminal.end_process ();
+            }
+            this.dispose ();
+            return true;
+        }
+
         private void update_browser_label (string? uri) {
             AppInfo? info = Fermion.Utils.get_default_app_for_uri (uri);
 
-            menu.remove (0);
-
-            var ms1 = new Menu ();
-            var app = info != null ? info.get_display_name () : "Default application";
-            ms1.append (@"Show in $(app)", "win.action-open-in-browser");
-            menu.insert_section (0, null, ms1);
+            if (!info.get_display_name ().contains("Fermion")) {
+                menu.remove (0);
+                var ms1 = new Menu ();
+                var app = info != null ? info.get_display_name () : "Default app";
+                ms1.append (@"Show in $(app)", "win.action-open-in-browser");
+                menu.insert_section (0, null, ms1);
+            } else {
+                menu.remove (0);
+            }
         }
 
         [GtkCallback]
@@ -168,11 +169,11 @@ namespace Fermion {
         [GtkCallback]
         private void on_tab_removed (He.Tab tab) {
             var widget = get_term_widget (tab);
-            if (switcher.n_tabs == 1) {
+            if (switcher.n_tabs == 0) {
                 foreach (unowned TerminalWidget terminal in terminals) {
                     terminal.end_process ();
                 }
-                this.close ();
+                this.dispose ();
             } else {
                 terminals.remove (widget);
             }
@@ -204,7 +205,6 @@ namespace Fermion {
         private void on_tab_switched (He.Tab? old_tab, He.Tab new_tab) {
             current_terminal = get_term_widget (new_tab);
 
-            // TODO maybe threadservice
             Idle.add (() => {
                 get_term_widget (new_tab).grab_focus ();
                 popover.unparent ();
@@ -218,10 +218,9 @@ namespace Fermion {
             var widget = get_term_widget (tab);
 
             if (should_close) {
-                foreach (unowned TerminalWidget terminal in terminals) {
-                    terminal.end_process ();
-                }
-                this.close ();
+                widget.kill_fg ();
+
+                current_terminal.grab_focus ();
                 
                 should_close = false;
 
@@ -361,8 +360,6 @@ namespace Fermion {
         }
 
         private void action_close_tab () {
-            // shit i forgor to write this
-            //current_terminal.tab.close ();
             current_terminal.grab_focus ();
         }
 
