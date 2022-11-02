@@ -18,7 +18,7 @@
 
 namespace Fermion {
     public class TerminalWidget : Vte.Terminal {    
-        GLib.Pid child_pid;
+        GLib.Pid pid;
 
         internal const string DEFAULT_LABEL = "Terminal";
         public string current_working_directory { get; private set; default = "";}
@@ -88,7 +88,7 @@ namespace Fermion {
             int pty = get_pty ().fd;
             int fgpid = Posix.tcgetpgrp (pty);
 
-            if (fgpid != this.child_pid && fgpid != -1) {
+            if (fgpid != this.pid && fgpid != -1) {
                 pid = (int) fgpid;
                 return true;
             } else {
@@ -144,49 +144,86 @@ namespace Fermion {
             }
         }
 
-        private void terminal_callback (Vte.Terminal terminal, GLib.Pid pid, Error? error) {
-            if (pid != -1) {
-                child_pid = pid;
+        private void terminal_callback (Vte.Terminal terminal, GLib.Pid p, Error? error) {
+            if (p != -1) {
+                pid = p;
             } else {
                 feed ((error.message + "\r\n\r\n").data);
             }
         }
 
         public void end_process () {
-            while (Posix.kill (this.child_pid, 0) == 0) {
-                Posix.kill (this.child_pid, Posix.Signal.HUP);
-                Posix.kill (this.child_pid, Posix.Signal.TERM);
+            while (Posix.kill (this.pid, 0) == 0) {
+                Posix.kill (this.pid, Posix.Signal.HUP);
+                Posix.kill (this.pid, Posix.Signal.TERM);
                 Thread.usleep (100);
             }
         }
 
         public void set_active_shell (string? dir = GLib.Environment.get_current_dir ()) {
-            string shell = Vte.get_user_shell ();
-            string?[] envv = null;
             string[] argv;
+            string[] envv;
             Vte.PtyFlags flags = Vte.PtyFlags.DEFAULT;
+            string shell;
 
-            shell = fp_guess_shell () ?? "/usr/bin/bash";
+            // Spawning works differently on host vs flatpak
+            if (is_flatpak ()) {
+              shell = fp_guess_shell () ?? "/usr/bin/bash";
 
-            flags = Vte.PtyFlags.NO_CTTY;
+              flags = Vte.PtyFlags.NO_CTTY;
 
-            argv = {
+              argv = {
                 "/usr/bin/flatpak-spawn",
                 "--host",
                 "--watch-bus"
-            };
+              };
 
-            envv = fp_get_env () ?? Environ.get ();
+              envv = fp_get_env () ?? Environ.get ();
 
-            foreach (unowned string env in fenvv) {
+              foreach (unowned string env in fenvv) {
                 argv += @"--env=$(env)";
+              }
+
+              foreach (unowned string env in envv) {
+                argv += @"--env=$(env)";
+              }
+            }
+            else {
+              envv = Environ.get ();
+
+              foreach (unowned string env in fenvv) {
+                envv += env;
+              }
+
+              shell = Environ.get_variable (envv, "SHELL");
+
+              argv = {};
+
+              flags = Vte.PtyFlags.DEFAULT;
             }
 
-            foreach (unowned string env in envv) {
-                argv += @"--env=$(env)";
-            }
+            argv += shell;
 
-            this.spawn_async (Vte.PtyFlags.DEFAULT, dir, { shell }, envv, SpawnFlags.SEARCH_PATH, null, -1, null, terminal_callback);
+            this.spawn_async (
+              flags,
+              dir,
+              argv,
+              envv,
+              0,
+              null,
+              -1,
+              null,
+              // For some reason, if I try using `err` here vala will generate the
+              // following line at the top of this lambda function:
+              //
+              // g_return_if_fail (err != NULL);
+              //
+              // Which is insane, and does not work, since we expect error to be null
+              // almost always.
+              (_, _pid /*, err */) => {
+                this.pid = (!) (_pid);
+              }
+            );
         }
 
         public bool is_flatpak() {
@@ -262,15 +299,8 @@ namespace Fermion {
         }
 
         public string get_shell_location () {
-            int pid = (!) (this.child_pid);
-
-            try {
-                // I wonder if Vte provides this, but I don't have Vte docs atm
-                // TODO Check if implemented in Vte
-                return GLib.FileUtils.read_link ("/proc/%d/cwd".printf (pid));
-            } catch (GLib.FileError error) {
-                return "";
-            }
+            // It does. :)
+            return this.get_current_directory_uri ();
         }
 
         public void reload () {
@@ -296,7 +326,7 @@ namespace Fermion {
 
         private void reload_internal () {
             var old_loc = get_shell_location ();
-            Posix.kill (this.child_pid, Posix.Signal.TERM);
+            Posix.kill (this.pid, Posix.Signal.TERM);
             reset (true, true);
             set_active_shell (old_loc);
         }

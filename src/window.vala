@@ -136,6 +136,15 @@ namespace Fermion {
             menu.append_section (null, ms2);
 
             popover.set_menu_model (menu);
+
+            this.switcher.notify["n-tabs"].connect (() => {
+                foreach (unowned TerminalWidget terminal in terminals) {
+                    terminal.end_process ();
+                }
+                if (switcher.n_tabs < 1) {
+                    this.close ();
+                }
+            });
         }
 
         // TODO, make it so we can't open our own app LOL
@@ -160,7 +169,10 @@ namespace Fermion {
         private void on_tab_removed (He.Tab tab) {
             var widget = get_term_widget (tab);
             if (switcher.n_tabs == 1) {
-                on_destroy ();
+                foreach (unowned TerminalWidget terminal in terminals) {
+                    terminal.end_process ();
+                }
+                this.close ();
             } else {
                 terminals.remove (widget);
             }
@@ -206,9 +218,10 @@ namespace Fermion {
             var widget = get_term_widget (tab);
 
             if (should_close) {
-                //widget.kill_fg ();
-
-                current_terminal.grab_focus ();
+                foreach (unowned TerminalWidget terminal in terminals) {
+                    terminal.end_process ();
+                }
+                this.close ();
                 
                 should_close = false;
 
@@ -321,13 +334,6 @@ namespace Fermion {
             tab.tooltip = term.current_working_directory;
 
             return tab;
-        }
-
-        private void on_destroy () {
-            foreach (unowned TerminalWidget terminal in terminals) {
-                terminal.end_process ();
-            }
-            app.active_window?.dispose ();
         }
 
         private void action_copy () {
