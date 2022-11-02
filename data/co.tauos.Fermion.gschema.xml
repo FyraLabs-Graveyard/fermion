@@ -8,7 +8,7 @@
 
   <schema id="co.tauos.Fermion.Settings" path="/co/tauos/Fermion/Settings/">
     <key type="s" name="background-color">
-      <default>"#22262B"</default>
+      <default>"#2d2d2d"</default>
       <summary>Color of the background.</summary>
       <description>
           The color of the background of the terminal.
@@ -20,7 +20,7 @@
       </description>
     </key>
     <key type="s" name="foreground-color">
-      <default>"#ABABB6"</default>
+      <default>"#FAFAFA"</default>
       <summary>Color of the text.</summary>
       <description>
           The color of the text of the terminal.
@@ -32,7 +32,7 @@
       </description>
     </key>
     <key type="s" name="cursor-color">
-      <default>"#839496"</default>
+      <default>"#bf56a8"</default>
       <summary>Color of the cursor.</summary>
       <description>
           The color of the cursor of the terminal.

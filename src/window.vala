@@ -159,7 +159,7 @@ namespace Fermion {
         [GtkCallback]
         private void on_tab_removed (He.Tab tab) {
             var widget = get_term_widget (tab);
-            if (switcher.n_tabs == 0) {
+            if (switcher.n_tabs == 1) {
                 on_destroy ();
             } else {
                 terminals.remove (widget);
@@ -327,7 +327,7 @@ namespace Fermion {
             foreach (unowned TerminalWidget terminal in terminals) {
                 terminal.end_process ();
             }
-            this.destroy ();
+            app.active_window?.dispose ();
         }
 
         private void action_copy () {

@@ -3,7 +3,7 @@
     "runtime" : "co.tauos.Platform",
     "runtime-version" : "stable",
     "sdk" : "co.tauos.Sdk",
-    "command" : "fermion",
+    "command" : "co.tauos.Fermion",
     "finish-args" : [
         "--filesystem=home:ro",
         "--share=ipc",
@@ -44,6 +44,9 @@
             "name" : "fermion",
             "builddir" : true,
             "buildsystem" : "meson",
+            "config-opts" : [
+                "-Ddevelopment=false"
+            ],
             "sources" : [
                 {
                     "type" : "dir",

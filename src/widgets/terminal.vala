@@ -23,6 +23,12 @@ namespace Fermion {
         internal const string DEFAULT_LABEL = "Terminal";
         public string current_working_directory { get; private set; default = "";}
 
+        static string[] fenvv = {
+            "TERM=xterm-256color",
+            "COLORTERM=truecolor",
+            "TERM_PROGRAM=%s".printf (Config.APP_ID),
+        };
+
         // URL Matching. Yes, GNOME Terminal does this too.
         const string USERCHARS = "-[:alnum:]";
         const string USERCHARS_CLASS = "[" + USERCHARS + "]";
@@ -157,12 +163,102 @@ namespace Fermion {
         public void set_active_shell (string? dir = GLib.Environment.get_current_dir ()) {
             string shell = Vte.get_user_shell ();
             string?[] envv = null;
+            string[] argv;
+            Vte.PtyFlags flags = Vte.PtyFlags.DEFAULT;
 
-            envv = {
-                // Set environment variables
+            shell = fp_guess_shell () ?? "/usr/bin/bash";
+
+            flags = Vte.PtyFlags.NO_CTTY;
+
+            argv = {
+                "/usr/bin/flatpak-spawn",
+                "--host",
+                "--watch-bus"
             };
 
+            envv = fp_get_env () ?? Environ.get ();
+
+            foreach (unowned string env in fenvv) {
+                argv += @"--env=$(env)";
+            }
+
+            foreach (unowned string env in envv) {
+                argv += @"--env=$(env)";
+            }
+
             this.spawn_async (Vte.PtyFlags.DEFAULT, dir, { shell }, envv, SpawnFlags.SEARCH_PATH, null, -1, null, terminal_callback);
+        }
+
+        public bool is_flatpak() {
+            return FileUtils.test("/.flatpak-info", FileTest.EXISTS);
+        }
+
+        /* fp_guess_shell
+        *
+        * Copyright 2019 Christian Hergert <chergert@redhat.com>
+        *
+        * The following function is a derivative work of the code from
+        * https://gitlab.gnome.org/chergert/flatterm which is licensed under the
+        * Apache License, Version 2.0 <LICENSE-APACHE or
+        * https://opensource.org/licenses/MIT>, at your option. This file may not
+        * be copied, modified, or distributed except according to those terms.
+        *
+        * SPDX-License-Identifier: (MIT OR Apache-2.0)
+        */
+        public string? fp_guess_shell(Cancellable? cancellable = null) throws Error {
+            if (!is_flatpak())
+              return Vte.get_user_shell();
+
+            string[] argv = { "flatpak-spawn", "--host", "getent", "passwd",
+              Environment.get_user_name() };
+
+            var launcher = new GLib.SubprocessLauncher(
+              SubprocessFlags.STDOUT_PIPE | SubprocessFlags.STDERR_SILENCE
+            );
+
+            launcher.unsetenv("G_MESSAGES_DEBUG");
+            var sp = launcher.spawnv(argv);
+
+            if (sp == null)
+              return null;
+
+            string? buf = null;
+            if (!sp.communicate_utf8(null, cancellable, out buf, null))
+              return null;
+
+            var parts = buf.split(":");
+
+            if (parts.length < 7) {
+              return null;
+            }
+
+            return parts[6].strip();
+        }
+
+        public string[]? fp_get_env(Cancellable? cancellable = null) throws Error {
+            if (!is_flatpak())
+              return Environ.get();
+
+            string[] argv = { "flatpak-spawn", "--host", "env" };
+
+            var launcher = new GLib.SubprocessLauncher(
+              SubprocessFlags.STDOUT_PIPE | SubprocessFlags.STDERR_SILENCE
+            );
+
+            launcher.setenv("G_MESSAGES_DEBUG", "false", true);
+
+            var sp = launcher.spawnv(argv);
+
+            if (sp == null)
+              return null;
+
+            string? buf = null;
+            if (!sp.communicate_utf8(null, cancellable, out buf, null))
+              return null;
+
+            string[] arr = buf.strip().split("\n");
+
+            return arr;
         }
 
         public string get_shell_location () {

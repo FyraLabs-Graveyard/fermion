@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=Fermion
 Comment=Use the command line
-Exec=fermion
+Exec=co.tauos.Fermion
 Icon=co.tauos.Fermion
 Keywords=shell;prompt;command;commandline;cmd;
 Type=Application

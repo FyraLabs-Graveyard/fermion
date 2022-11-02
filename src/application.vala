@@ -74,7 +74,7 @@ namespace Fermion {
 
         protected override void startup () {
             Gdk.RGBA accent_color = { 0 };
-            accent_color.parse("#333");
+            accent_color.parse("#bf56a8");
             default_accent_color = He.Color.from_gdk_rgba(accent_color);
 
             base.startup ();
@@ -113,7 +113,7 @@ namespace Fermion {
 
         private int handle_command_line (ApplicationCommandLine command_line) {
             var context = new OptionContext (null);
-            context.add_main_entries (ENTRIES, "fermion");
+            context.add_main_entries (ENTRIES, "co.tauos.Fermion");
             context.set_help_enabled (false);
 
             string[] args = command_line.get_arguments ();
@@ -147,7 +147,7 @@ namespace Fermion {
                 unowned string[] tmp = arg_opt;
                 context.parse (ref tmp);
             } catch (Error e) {
-                stdout.printf ("fermion: ERROR: " + e.message + "\n");
+                stdout.printf ("co.tauos.Fermion: ERROR: " + e.message + "\n");
                 return 0;
             }
 
@@ -195,7 +195,7 @@ namespace Fermion {
             string[] developers = { "Jamie Murphy", "Lains" };
             new He.AboutWindow (
                                 this.active_window,
-                                @"Fermion$(Config.NAME_SUFFIX)",
+                                @"Fermion $(Config.NAME_SUFFIX)",
                                 Config.APP_ID,
                                 Config.VERSION,
                                 Config.APP_ID, // Version
