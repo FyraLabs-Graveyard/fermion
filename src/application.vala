@@ -95,7 +95,7 @@ namespace Fermion {
 
         public override void window_removed (Gtk.Window window) {
             windows.remove (window as Fermion.Window);
-            base.window_added (window);
+            base.window_removed (window);
         }
 
         public override int command_line (ApplicationCommandLine command_line) {
@@ -194,20 +194,20 @@ namespace Fermion {
         private void on_about_action () {
             string[] developers = { "Jamie Murphy", "Lains" };
             new He.AboutWindow (
-                                this.active_window,
-                                @"Fermion $(Config.NAME_SUFFIX)",
-                                Config.APP_ID,
-                                Config.VERSION,
-                                Config.APP_ID, // Version
-                                "https://github.com/tau-OS/fermion/tree/main/po",
-                                "https://github.com/tau-OS/fermion/issues",
-                                "https://github.com/tau-OS/fermion",
-                                {},
-                                developers,
-                                2022,
-                                He.AboutWindow.Licenses.GPLv3,
-                                He.Colors.NONE
-                               ).present ();
+                this.active_window,
+                @"Fermion $(Config.NAME_SUFFIX)",
+                Config.APP_ID,
+                Config.VERSION,
+                Config.APP_ID, // Version
+                "https://github.com/tau-OS/fermion/tree/main/po",
+                "https://github.com/tau-OS/fermion/issues",
+                "https://github.com/tau-OS/fermion",
+                {},
+                developers,
+                2022,
+                He.AboutWindow.Licenses.GPLv3,
+                He.Colors.PINK
+            ).present ();
         }
 
         private void on_preferences_action () {
