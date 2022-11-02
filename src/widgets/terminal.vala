@@ -19,6 +19,7 @@
 namespace Fermion {
     public class TerminalWidget : Vte.Terminal {    
         GLib.Pid pid;
+        private He.Desktop desktop;
 
         internal const string DEFAULT_LABEL = "Terminal";
         public string current_working_directory { get; private set; default = "";}
@@ -104,8 +105,12 @@ namespace Fermion {
             this.clickable (REGEX_STRINGS);
             this.handle_events ();
 
-            restore_settings ();
-            Application.settings.changed.connect (restore_settings);
+            desktop = new He.Desktop ();
+            restore_settings (desktop);
+            desktop.notify["prefers-color-scheme"].connect (() => {
+                restore_settings (desktop);
+            });
+
             child_has_exited = false;
 
             child_exited.connect (() => {
@@ -113,22 +118,58 @@ namespace Fermion {
             });
         }
 
-        public void restore_settings () {
-            Gdk.RGBA background_color = Gdk.RGBA ();
-            background_color.parse (Application.settings.get_string ("background-color"));
-            Gdk.RGBA foreground_color = Gdk.RGBA ();
-            foreground_color.parse (Application.settings.get_string ("foreground-color"));
+        public void restore_settings (He.Desktop desktop) {
+            var theme_palette = new Gdk.RGBA[19];
+            theme_palette = get_rgba_palette (desktop);
+            var background = theme_palette[19 - 3];
+            var foreground = theme_palette[19 - 2];
+            var cursor = theme_palette[19 - 1];
+            var palette = theme_palette[0:16];
 
-            this.set_colors (foreground_color, background_color, null);
-
-            Gdk.RGBA cursor_color = Gdk.RGBA ();
-            cursor_color.parse (Application.settings.get_string ("cursor-color"));
-
-            this.set_color_cursor (cursor_color);
+            this.set_colors (foreground, background, palette);
+            this.set_color_cursor (cursor);
 
             this.set_cursor_shape ((Vte.CursorShape) Application.settings.get_enum ("cursor-shape"));
 
             this.set_audible_bell (Application.settings.get_boolean ("audible-bell"));
+        }
+
+        // format is color01:color02:...:color16:background:foreground:cursor
+        public static Gdk.RGBA[] get_rgba_palette (He.Desktop desktop) {
+            var string_palette = get_string_palette (desktop);
+            var rgba_palette = new Gdk.RGBA[19];
+            for (int i = 0; i < 19; i++) {
+                var new_color = Gdk.RGBA ();
+                new_color.parse(string_palette[i]);
+                rgba_palette[i] = new_color;
+            }
+
+            return rgba_palette;
+        }
+        private static string[] get_string_palette (He.Desktop desktop) {
+            var string_palette = new string[19];
+
+            if (He.Desktop.ColorScheme.DARK == desktop.prefers_color_scheme) {
+                string_palette = {
+                    // Dark colors, KRGYBMCW
+                    "#2d2d2d", "#b21e4c", "#2fb744", "#e0a101", "#0674e6", "#9f3c89", "#38947e", "#ababb6",
+                    // Light colors, KRGYBMCW
+                    "#6a6a6a", "#db2860", "#49d05e", "#febc16", "#268ef9", "#bf56a8", "#56bfa6", "#fafafa",
+                    // BG, FG, C
+                    "#2d2d2d", "#f0f0f2", "#828292"
+                };
+            } else {
+                string_palette = {
+                    // Dark colors, KRGYBMCW
+                    "#2d2d2d", "#b21e4c", "#2fb744", "#e0a101", "#0674e6", "#9f3c89", "#38947e", "#ababb6",
+                    // Light colors, KRGYBMCW
+                    "#6a6a6a", "#db2860", "#49d05e", "#febc16", "#268ef9", "#bf56a8", "#56bfa6", "#fafafa",
+                    // BG, FG, C
+                    "#f0f0f2", "#2d2d2d", "#828292"
+                };
+            }
+            Application.settings.set_string ("palette", string.joinv (":", string_palette));
+            return string_palette;
         }
 
         public void run_program (string program_string, string? working_directory) {

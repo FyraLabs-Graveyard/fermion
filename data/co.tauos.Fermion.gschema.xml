@@ -7,40 +7,11 @@
   </enum>
 
   <schema id="co.tauos.Fermion.Settings" path="/co/tauos/Fermion/Settings/">
-    <key type="s" name="background-color">
+    <key type="s" name="palette">
       <default>"#2d2d2d"</default>
       <summary>Color of the background.</summary>
       <description>
-          The color of the background of the terminal.
-
-          The string can be either one of:
-            - A hexadecimal value in the form “#rgb”, “#rrggbb”, “#rrrgggbbb” or ”#rrrrggggbbbb”
-            - A RGB color in the form “rgb(r,g,b)” (In this case the color will have full opacity)
-            - A RGBA color in the form “rgba(r,g,b,a)”
-      </description>
-    </key>
-    <key type="s" name="foreground-color">
-      <default>"#FAFAFA"</default>
-      <summary>Color of the text.</summary>
-      <description>
-          The color of the text of the terminal.
-
-          The string can be either one of:
-            - A hexadecimal value in the form “#rgb”, “#rrggbb”, “#rrrgggbbb” or ”#rrrrggggbbbb”
-            - A RGB color in the form “rgb(r,g,b)” (In this case the color will have full opacity)
-            - A RGBA color in the form “rgba(r,g,b,a)”
-      </description>
-    </key>
-    <key type="s" name="cursor-color">
-      <default>"#bf56a8"</default>
-      <summary>Color of the cursor.</summary>
-      <description>
-          The color of the cursor of the terminal.
-
-          The string can be either one of:
-            - A hexadecimal value in the form “#rgb”, “#rrggbb”, “#rrrgggbbb” or ”#rrrrggggbbbb”
-            - A RGB color in the form “rgb(r,g,b)” (In this case the color will have full opacity)
-            - A RGBA color in the form “rgba(r,g,b,a)”
+          The palette used for the terminal.
       </description>
     </key>
     <key name="cursor-shape" enum="terminal-cursor-shapes">
