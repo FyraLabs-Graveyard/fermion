@@ -1,0 +1,55 @@
+{
+    "app-id" : "co.tauos.Fermion",
+    "runtime" : "co.tauos.Platform",
+    "runtime-version" : "stable",
+    "sdk" : "co.tauos.Sdk",
+    "command" : "fermion",
+    "finish-args" : [
+        "--filesystem=home:ro",
+        "--share=ipc",
+        "--socket=fallback-x11",
+        "--socket=wayland",
+        "--device=dri",
+        "--talk-name=org.freedesktop.Flatpak"
+    ],
+    "cleanup" : [
+        "/cache",
+        "/man",
+        "/share/aclocal",
+        "/share/devhelp",
+        "/lib/systemd",
+        "/include",
+        "/lib/pkgconfig",
+        "/lib/libvala*",
+        "/share/gtk-doc",
+        "/share/man",
+        "/share/vala",
+        "*.a",
+        "*.la"
+    ],
+    "modules" : [
+        {
+          "name": "vte",
+          "buildsystem": "meson",
+          "config-opts": ["-Dgtk4=true", "-Dgtk3=false"],
+          "sources": [
+            {
+              "type": "archive",
+              "url": "https://gitlab.gnome.org/GNOME/vte/-/archive/9dbae321af881924b5cae245b3d956497e088437/vte-9dbae321af881924b5cae245b3d956497e088437.tar.gz",
+              "sha256": "f96908a6c06b5efd256fb88f001f82042bc10b8e0f9ca3e46f5a477646386428"
+            }
+          ]
+        },
+        {
+            "name" : "fermion",
+            "builddir" : true,
+            "buildsystem" : "meson",
+            "sources" : [
+                {
+                    "type" : "dir",
+                    "path" : "."
+                }
+            ]
+        }
+    ]
+}

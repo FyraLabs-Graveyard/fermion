@@ -72,6 +72,14 @@ namespace Fermion {
             set_accels_for_action ("app.new-window", {"<Control><Shift>n"});
         }
 
+        protected override void startup () {
+            Gdk.RGBA accent_color = { 0 };
+            accent_color.parse("#333");
+            default_accent_color = He.Color.from_gdk_rgba(accent_color);
+
+            base.startup ();
+        }
+
         public void new_window () {
             var win = new Window (this, null, null);
             win.present ();
@@ -184,20 +192,22 @@ namespace Fermion {
         }
 
         private void on_about_action () {
-            string[] developers = { "Jamie Murphy" };
-            new He.AboutWindow (this.active_window,
+            string[] developers = { "Jamie Murphy", "Lains" };
+            new He.AboutWindow (
+                                this.active_window,
                                 @"Fermion$(Config.NAME_SUFFIX)",
                                 Config.APP_ID,
                                 Config.VERSION,
                                 Config.APP_ID, // Version
-                                null,
+                                "https://github.com/tau-OS/fermion/tree/main/po",
                                 "https://github.com/tau-OS/fermion/issues",
                                 "https://github.com/tau-OS/fermion",
                                 {},
                                 developers,
                                 2022,
                                 He.AboutWindow.Licenses.GPLv3,
-                                He.Colors.DARK).present ();
+                                He.Colors.NONE
+                               ).present ();
         }
 
         private void on_preferences_action () {
