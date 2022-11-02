@@ -58,15 +58,15 @@ namespace Fermion {
             "(?:news:|man:|info:)[[:alnum:]\\Q^_{|}~!\"#$%&'()*+,./;:=?`\\E]+"
         };
 
-        /**
-        * This signal is emitted when the terminal process exits. Something should
-        * listen for this signal and close the tab that contains this terminal.
-        */
-        public signal void exit ();
+        public const int SYS_PIDFD_OPEN = 434; // Same on every arch
 
-        private void on_child_exited () {
-            this.pid = -1;
-            this.exit ();
+        public bool child_has_exited {
+            get;
+            private set;
+        }
+        public bool killed {
+            get;
+            private set;
         }
 
         public He.Tab tab;
@@ -106,13 +106,16 @@ namespace Fermion {
             this.clickable (REGEX_STRINGS);
             this.handle_events ();
 
+            child_has_exited = false;
+            killed = false;
+
             desktop = new He.Desktop ();
             restore_settings (desktop);
             desktop.notify["prefers-color-scheme"].connect (() => {
                 restore_settings (desktop);
             });
 
-            this.child_exited.connect (this.on_child_exited);
+            child_exited.connect (on_child_exited);
         }
 
         public void restore_settings (He.Desktop desktop) {
@@ -191,24 +194,48 @@ namespace Fermion {
         }
 
         public void end_process () {
+            killed = true;
+
+#if HAS_LINUX
+            int pid_fd = Linux.syscall (SYS_PIDFD_OPEN, this.pid, 0);
+#else
+            int pid_fd = -1;
+#endif
+
             Posix.kill (this.pid, Posix.Signal.HUP);
             Posix.kill (this.pid, Posix.Signal.TERM);
 
-            int pid_fd = -1;
+            // pidfd_open isn't supported in Linux kernel < 5.3
+            if (pid_fd == -1) {
+#if HAS_GLIB_2_74
+                // GLib 2.73.2 dropped global GChildWatch, we need to wait ourselves
+                Posix.waitpid (this.pid, null, 0);
+#else
+                while (Posix.kill (this.pid, 0) == 0) {
+                    Thread.usleep (100);
+                }
+#endif
+                return;
+            }
 
             Posix.pollfd pid_pfd[1];
             pid_pfd[0] = Posix.pollfd () {
                 fd = pid_fd,
                 events = Posix.POLLIN
             };
+
+            // The loop deals the case when SIGCHLD is delivered to us and restarts the call
             while (Posix.poll (pid_pfd, -1) != 1) {}
 
-            Posix.close (pid);
+            Posix.close (pid_fd);
         }
         public void kill_fg () {
             int fg_pid;
             if (this.try_get_foreground_pid (out fg_pid))
                 Posix.kill (fg_pid, Posix.Signal.KILL);
+        }
+        void on_child_exited () {
+            child_has_exited = true;
         }
 
         public void set_active_shell (string? dir = GLib.Environment.get_current_dir ()) {

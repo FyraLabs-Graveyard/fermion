@@ -89,7 +89,6 @@ namespace Fermion {
         }
 
         static construct {
-            // this is broken and idk why
             action_accelerators[ACTION_COPY] = "<Control><Shift>c";
             action_accelerators[ACTION_PASTE] = "<Control><Shift>V";
             action_accelerators[ACTION_SELECT_ALL] = "<Control><Shift>a";
@@ -321,6 +320,17 @@ namespace Fermion {
             } else {
                 widget.run_program (program, dir);
             }
+
+            widget.child_exited.connect (() => {
+                if (!widget.killed) {
+                    if (program != null) {
+                        program = null;
+                    } else {
+                        //widget.tab.close ();
+                        return;
+                    }
+                }
+            });
 
             handle_events (widget);
 
