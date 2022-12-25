@@ -156,7 +156,7 @@ namespace Fermion {
                     // Light colors, KRGYBMCW
                     "#6a6a6a", "#db2860", "#49d05e", "#febc16", "#268ef9", "#bf56a8", "#56bfa6", "#fafafa",
                     // BG, FG, C
-                    "#2d2d2d", "#f0f0f2", "#828292"
+                    "#111111", "#f0f0f2", "#828292"
                 };
             } else {
                 string_palette = {
@@ -165,7 +165,7 @@ namespace Fermion {
                     // Light colors, KRGYBMCW
                     "#6a6a6a", "#db2860", "#49d05e", "#febc16", "#268ef9", "#bf56a8", "#56bfa6", "#fafafa",
                     // BG, FG, C
-                    "#f0f0f2", "#2d2d2d", "#828292"
+                    "#fafafa", "#2d2d2d", "#828292"
                 };
             }
             Application.settings.set_string ("palette", string.joinv (":", string_palette));
