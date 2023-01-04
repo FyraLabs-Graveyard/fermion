@@ -6,6 +6,11 @@ install_data(
 )
 
 install_data(
+  '@0@.svg'.format(app_id),
+  install_dir: join_paths(icondir, 'scalable/apps', '@0@.Devel.svg'),
+)
+
+install_data(
   'co.tauos.Fermion-symbolic.svg',
   install_dir: join_paths(icondir, 'symbolic/apps'),
   rename: '@0@-symbolic.svg'.format(app_id),
