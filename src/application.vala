@@ -74,7 +74,7 @@ namespace Fermion {
 
         protected override void startup () {
             Gdk.RGBA accent_color = { 0 };
-            accent_color.parse("#bf56a8");
+            accent_color.parse("#828292");
             default_accent_color = He.Color.from_gdk_rgba(accent_color);
 
             base.startup ();
@@ -206,7 +206,7 @@ namespace Fermion {
                 developers,
                 2022,
                 He.AboutWindow.Licenses.GPLv3,
-                He.Colors.PINK
+                He.Colors.DARK
             ).present ();
         }
 
