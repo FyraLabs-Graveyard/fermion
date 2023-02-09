@@ -17,7 +17,7 @@
  */
 
  namespace Fermion {
-    [GtkTemplate (ui = "/co/tauos/Fermion/preferences.ui")]
+    [GtkTemplate (ui = "/com/fyralabs/Fermion/preferences.ui")]
     public class Preferences : He.SettingsWindow {       
         
         public Preferences (Gtk.Window parent) {

@@ -1,9 +1,9 @@
 {
-    "app-id" : "co.tauos.Fermion",
-    "runtime" : "co.tauos.Platform",
+    "app-id" : "com.fyralabs.Fermion",
+    "runtime" : "com.fyralabs.Platform",
     "runtime-version" : "stable",
-    "sdk" : "co.tauos.Sdk",
-    "command" : "co.tauos.Fermion",
+    "sdk" : "com.fyralabs.Sdk",
+    "command" : "com.fyralabs.Fermion",
     "finish-args" : [
         "--filesystem=home:ro",
         "--share=ipc",

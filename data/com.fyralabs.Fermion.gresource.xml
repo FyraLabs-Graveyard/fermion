@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gresources>
-  <gresource prefix="/co/tauos/Fermion">
+  <gresource prefix="/com/fyralabs/Fermion">
     <file alias="window.ui">ui/window.ui</file>
     <file alias="preferences.ui">ui/preferences.ui</file>
     <file alias="dialogs/unsafe_paste.ui">ui/dialogs/unsafe_paste.ui</file>
@@ -11,5 +11,5 @@
   </gresource>
 
   <!-- Icons: Every single custom icon that's used in the UI should be listed here, and in the actions folder -->
-  <gresource prefix="/co/tauos/Fermion/icons"></gresource>
+  <gresource prefix="/com/fyralabs/Fermion/icons"></gresource>
 </gresources>

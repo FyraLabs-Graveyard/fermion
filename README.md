@@ -1,4 +1,4 @@
-<img align="left" style="vertical-align: middle" width="120" height="120" src="data/icons/co.tauos.Fermion.svg">
+<img align="left" style="vertical-align: middle" width="120" height="120" src="data/icons/com.fyralabs.Fermion.svg">
 
 # Fermion
 

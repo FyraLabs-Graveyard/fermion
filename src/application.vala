@@ -58,7 +58,7 @@ namespace Fermion {
             Object (
                 flags: ApplicationFlags.HANDLES_COMMAND_LINE,
                 application_id: Config.APP_ID,
-                resource_base_path: "/co/tauos/Fermion"
+                resource_base_path: "/com/fyralabs/Fermion"
             );
 
             settings = new GLib.Settings (Config.APP_SETTINGS);
@@ -113,7 +113,7 @@ namespace Fermion {
 
         private int handle_command_line (ApplicationCommandLine command_line) {
             var context = new OptionContext (null);
-            context.add_main_entries (ENTRIES, "co.tauos.Fermion");
+            context.add_main_entries (ENTRIES, "com.fyralabs.Fermion");
             context.set_help_enabled (false);
 
             string[] args = command_line.get_arguments ();
@@ -147,7 +147,7 @@ namespace Fermion {
                 unowned string[] tmp = arg_opt;
                 context.parse (ref tmp);
             } catch (Error e) {
-                stdout.printf ("co.tauos.Fermion: ERROR: " + e.message + "\n");
+                stdout.printf ("com.fyralabs.Fermion: ERROR: " + e.message + "\n");
                 return 0;
             }
 
@@ -192,7 +192,7 @@ namespace Fermion {
         }
 
         private void on_about_action () {
-            string[] developers = { "Jamie Murphy", "Lains" };
+            string[] developers = { "Fyra Labs". "Jamie Murphy" };
             new He.AboutWindow (
                 this.active_window,
                 @"Fermion $(Config.NAME_SUFFIX)",

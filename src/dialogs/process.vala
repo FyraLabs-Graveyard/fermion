@@ -23,7 +23,7 @@ namespace Fermion {
         TERMINAL_CLOSE,
     }
 
-    [GtkTemplate (ui = "/co/tauos/Fermion/dialogs/process.ui")]
+    [GtkTemplate (ui = "/com/fyralabs/Fermion/dialogs/process.ui")]
     public class ProcessWarningDialog : He.Dialog {
         public signal void returned ();
 

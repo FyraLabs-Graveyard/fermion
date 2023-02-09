@@ -1,8 +1,8 @@
 [Desktop Entry]
 Name=Fermion
 Comment=Use the command line
-Exec=co.tauos.Fermion
-Icon=co.tauos.Fermion
+Exec=com.fyralabs.Fermion
+Icon=com.fyralabs.Fermion
 Keywords=shell;prompt;command;commandline;cmd;
 Type=Application
 Categories=GNOME;GTK;System;TerminalEmulator;

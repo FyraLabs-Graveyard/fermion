@@ -27,7 +27,7 @@ jobs:
       name: "Build"
       with:
         bundle: fermion.flatpak
-        manifest-path: co.tauos.Fermion.json
+        manifest-path: com.fyralabs.Fermion.json
         cache-key: flatpak-builder-${{ github.sha }}
         repository-name: catalogue
         repository-url: https://repo.tauos.co/catalogue.flatpakrepo

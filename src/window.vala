@@ -17,7 +17,7 @@
  */
 
 namespace Fermion {
-    [GtkTemplate (ui = "/co/tauos/Fermion/window.ui")]
+    [GtkTemplate (ui = "/com/fyralabs/Fermion/window.ui")]
     public class Window : He.ApplicationWindow {       
         [GtkChild] private unowned He.TabSwitcher switcher;
 

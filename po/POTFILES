@@ -1,6 +1,6 @@
-data/co.tauos.Fermion.desktop.in
-data/co.tauos.Fermion.appdata.xml.in
-data/co.tauos.Fermion.gschema.xml
+data/com.fyralabs.Fermion.desktop.in
+data/com.fyralabs.Fermion.appdata.xml.in
+data/com.fyralabs.Fermion.gschema.xml
 data/ui/window.ui
 src/window.vala
 src/application.vala

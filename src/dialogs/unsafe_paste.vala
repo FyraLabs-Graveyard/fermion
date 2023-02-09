@@ -17,7 +17,7 @@
  */
 
 namespace Fermion {
-    [GtkTemplate (ui = "/co/tauos/Fermion/dialogs/unsafe_paste.ui")]
+    [GtkTemplate (ui = "/com/fyralabs/Fermion/dialogs/unsafe_paste.ui")]
     public class UnsafePasteDialog : He.Dialog {
         public signal void returned ();
 

@@ -1,18 +1,18 @@
 project(
-    'co.tauos.Fermion',
+    'com.fyralabs.Fermion',
     ['c', 'vala'],
     version: '0.1.0',
     meson_version: '>= 0.59.0',
     default_options: [ 'warning_level=2', ],
 )
 
-application_id = 'co.tauos.Fermion'
+application_id = 'com.fyralabs.Fermion'
 
 if get_option('development')
-  app_id = 'co.tauos.Fermion.Devel'
+  app_id = 'com.fyralabs.Fermion.Devel'
   name_suffix = ' (Development)'
 else
-  app_id = 'co.tauos.Fermion'
+  app_id = 'com.fyralabs.Fermion'
   name_suffix = ''
 endif
 
