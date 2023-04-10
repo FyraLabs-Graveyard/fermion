@@ -1,4 +1,4 @@
-# Fermion has been deprecated, please try [Accelerator](https://github.com/tau-OS/accelerator) instead.
+# Fermion Has Been Deprecated, Please Try [Accelerator](https://github.com/tau-os/accelerator) instead.
 
 
 <img align="left" style="vertical-align: middle" width="120" height="120" src="data/icons/com.fyralabs.Fermion.svg">
